@@ -1,0 +1,381 @@
+@import url(http://fonts.googleapis.com/css?family=Orbitron:400,700);
+@import url(http://fonts.googleapis.com/css?family=Play:400,700);
+
+body {
+scrollbar-shadow-color: #ffffff;
+scrollbar-highlight-color: #ffffff;
+scrollbar-3dlight-color: #ffffff;  
+scrollbar-darkshadow-color: #ffffff;  
+scrollbar-track-color: #333333;
+scrollbar-arrow-color: #cccccc;
+scrollbar-face-color: #ff6600;
+
+margin: 0px;
+padding: 0px; 
+
+font-size: 13px;
+}
+
+.REEL {
+width: 660px;
+}
+
+
+header {
+position: fixed;
+left: 0px;
+top: 0px;
+bottom: 0px;
+width: 60px;
+height: 100%;
+background-color: #333;
+background-image: linear-gradient(to right, #333333 0px, #333333 58px, #FF6600 58px, #FF6600 60px);
+background-image: -webkit-linear-gradient(right, #333333 0px, #333333 58px, #FF6600 58px, #FF6600 60px);
+background-image: -moz-linear-gradient(right, #333333 0px, #333333 58px, #FF6600 58px, #FF6600 60px);
+background-image: -o-linear-gradient(right, #333333 0px, #333333 58px, #FF6600 58px, #FF6600 60px);
+-webkit-box-shadow: 0px 0px 10px 0px rgba(51, 51, 51, 0.8);
+-moz-box-shadow:    0px 0px 10px 0px rgba(51, 51, 51, 0.8);
+box-shadow:         0px 0px 10px 0px rgba(51, 51, 51, 0.8);
+}
+
+#Menu {
+position: absolute;
+top: 240px;
+}
+
+nav {
+position: absolute;
+color: #ff6600;
+top: 0px;
+right: 0px;
+left: 0px;
+height: 40px;
+background-image: linear-gradient(#333333 0px, #333333 38px, #FF6600 38px, #FF6600 40px);
+background-image: -webkit-linear-gradient(#333333 0px, #333333 38px, #FF6600 38px, #FF6600 40px);
+background-image: -moz-linear-gradient(#333333 0px, #333333 38px, #FF6600 38px, #FF6600 40px);
+background-image: -o-linear-gradient(#333333 0px, #333333 38px, #FF6600 38px, #FF6600 40px);
+-webkit-box-shadow: 0px 0px 10px 0px rgba(51, 51, 51, 0.8);
+-moz-box-shadow:    0px 0px 10px 0px rgba(51, 51, 51, 0.8);
+box-shadow:         0px 0px 10px 0px rgba(51, 51, 51, 0.8);
+min-width: 1240px;
+}
+
+#MenuGauche {
+position: absolute;
+top: 0px;
+left: 0px;
+width: 1240px;
+}
+
+nav ul {
+margin: 0px;
+padding: 0px;
+list-style-type: none;
+}
+
+nav ul li {
+float: left;
+padding-left: 20px;
+padding-right: 20px;
+padding-top: 10px;
+padding-bottom: 10px;   
+font-size: 16px;
+}
+
+nav ul li a {
+color: #F1F1F1;
+text-decoration: none;
+font-weight: bold;
+font-size: 16px;
+}
+
+nav ul li ul li a {
+color: #F1F1F1;
+text-decoration: none;
+font-weight: normal;
+font-size: 16px;
+}
+
+nav ul li a:hover {
+text-decoration: none;
+font-weight: bold;
+}
+
+nav ul li:hover {
+float: left;
+padding-left: 20px;
+padding-right: 20px;
+padding-top: 10px;
+padding-bottom: 10px;   
+}
+
+nav > ul > li {
+text-align: center;
+font-weight: bold;
+font-size: 16px
+}
+
+nav > ul > li > a {
+padding-left: 0;
+}
+
+/*sous menu*/
+
+nav ul li ul  {
+z-index: 40;
+position: absolute;
+display: none;
+width: 220px;
+margin: 5px 0px 0px -20px;
+background-color: #333333;
+}
+
+nav ul li ul li a:hover {
+color: #ff6600;
+font-weight: normal;
+}
+
+nav li:hover ul {
+display: block;
+z-index: 50;
+}
+
+nav li ul li {
+display: block;
+}
+
+section {
+position: absolute;
+left: 60px;
+top: 0px;
+bottom: 0px;
+right: 0px;
+}
+
+H1 {
+color: #333333;
+}
+
+article {
+position: relative;
+top: 45px;
+width: 1200px;
+margin: 20px;
+padding: 10px;
+min-height: 150px;
+text-decoration: none;
+background-color: rgba(255, 255, 255, 0.8);
+-webkit-box-shadow: 0px 0px 10px 0px rgba(51, 51, 51, 0.8);
+-moz-box-shadow:    0px 0px 10px 0px rgba(51, 51, 51, 0.8);
+box-shadow:         0px 0px 10px 0px rgba(51, 51, 51, 0.8);
+overflow: auto;
+}
+
+.ArticleAccueilAdmin {
+text-align: center;
+width: 320px; 
+background-color: #f1f1f1;
+}
+
+.col_1 {
+float: left;
+width: 120px;
+}
+
+input[type='email'] {
+width: 220px;
+padding: 5px;
+border : 1px solid #FF6600;
+background-color: #F1F1F1;
+}
+
+input[type='password'] {
+width: 220px;
+padding: 5px;
+border : 1px solid #FF6600;
+background-color: #F1F1F1;
+}
+
+input[type='text'] {
+padding: 5px;
+border : 1px solid #FF6600;
+background-color: #F1F1F1;
+}
+
+input[type='text'].Moyen {
+width: 130px;
+padding: 5px;
+border : 1px solid #FF6600;
+background-color: #F1F1F1;
+}
+
+input[type='text'].Long {
+width: 480px;
+padding: 5px;
+border : 1px solid #FF6600;
+background-color: #F1F1F1;
+}
+
+input[type='file'] {
+width: 320px;
+padding: 5px;
+color: #000000;
+border : 1px solid #FF6600;
+background-color: #F1F1F1;
+}
+
+select {
+padding: 5px;
+border : 1px solid #FF6600;
+background-color: #F1F1F1;
+}
+
+select.SelectMini {
+width: 67px;
+border : 1px solid #FF6600;
+background-color: #F1F1F1;
+}
+
+select.mini {
+width: 108px;
+padding: 5px;
+color: #000000;
+border : 1px solid #FF6600;
+background-color: #F1F1F1;
+}
+
+textarea {
+width: 480px;
+height: 250px;
+padding: 5px;
+border : 1px solid #FF6600;
+background-color: #F1F1F1;
+}
+
+input[type='submit'] {
+min-width: 120px;
+padding: 5px;
+color: #F1F1F1;
+border : 1px solid #FF6600;
+background-color: #333333;
+}
+
+table.Admin {
+width: 100%;
+border-spacing: 0px;
+}
+
+table.Admin th {
+padding: 5px;
+text-align: center; 
+border-bottom: 1px solid #ff6600;
+}
+
+table.Admin td {
+text-align: center;
+}
+
+table.Admin tr.vert{
+background-color: rgba(44,  215,  44,  0.5);
+background: rgba(44,  215,  44,  0.5); 
+}
+
+table.Admin tr.rouge{
+background-color: rgba(215,  44,  44,  0.5);
+background: rgba(215,  44,  44,  0.5);  
+}
+
+table.Admin tr.gris{
+background-color: rgba(33,  33,  33,  0.5);
+background: rgba(33,  33,  33,  0.5);  
+}
+
+.left {
+text-align: left;
+}
+
+#Gauche {
+float: left;
+width: 420px;
+}
+
+#Droite {
+float: left;
+width: 500px; 
+}
+
+#TitreGoogle {
+width: 500px;
+font-size: 18px;
+color: #1a0dab;
+}
+
+#SiteGoogle {
+color: #009900;
+width: 500px; 
+font-size: small;
+}
+
+#DescriptionGoogle {
+width: 500px; 
+color: #545454;
+font-size: small;
+}
+
+img.AncienMess {
+float: right;
+}
+
+img.NewMess {
+float: right;
+}
+
+#CompteClient {
+position: relative;
+top: 0px;
+right: 0px;
+padding: 10px;
+background-color: #333333;
+}
+
+#CompteClient a {
+color: #fff;
+text-decoration: none;
+}
+
+/* Signature **************************************************************************************** */
+
+td.Signature {
+    text-align: left;
+    border-top: 1px solid #ff6600;
+    }
+    
+    #Affichage {
+    float: right;
+    }
+    
+    #AffichagePage img {
+    margin: 0px;
+    }
+    
+    #AffichagePage {
+    overflow: hidden;
+    width: 800px;
+    height: 1132px;
+    margin: 0px;
+    position: relative;
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(51, 51, 51, 0.8);
+    -moz-box-shadow:    0px 0px 10px 0px rgba(51, 51, 51, 0.8);
+    box-shadow:         0px 0px 10px 0px rgba(51, 51, 51, 0.8);
+    }
+    
+    #ApercuTampon {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    }
+    
+    .InputTampon {
+    width: 300px;
+    height: 150px;
+    }
