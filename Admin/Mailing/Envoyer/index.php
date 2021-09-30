@@ -1,19 +1,29 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+
 
 if ($Cnx_Admin===false) {
-  header('location:'.$Home.'/Admin');
+  header('location:'.HOME.'/Admin');
 }
 
-$Erreur=$_GET['erreur'];
-$Valid=$_GET['valid'];
+if (isset($_GET['erreur']) || isset($_GET['valid'])) {
+      $Erreur=$_GET['erreur'];
+      $Valid=$_GET['valid'];
+}
+
 $Now=time();
 
-$RecupParam=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Parametre");
+$RecupParam=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Parametre");
 $RecupParam->execute();
-$ParamEmail=$RecupParam->fetch(PDO::FETCH_OBJ);      
+$ParamEmail=$RecupParam->fetch(PDO::FETCH_OBJ);    
+
+if ((!isset($_SESSION['groupe'])) || (!isset($_SESSION['objet']))) {
+    $_SESSION['groupe'] = "";
+    $_SESSION['objet'] = "";
+}
 
 if (isset($_POST['type'])) {
     $_SESSION['type']=$_POST['type'];
@@ -23,7 +33,7 @@ if (isset($_POST['type'])) {
 }
 
 if (isset($_SESSION['type'])) {
-    $RecupParam=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Predefini WHERE id=:id");
+    $RecupParam=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Predefini WHERE id=:id");
     $RecupParam->BindParam(":id", $_SESSION['type'], PDO::PARAM_STR);
     $RecupParam->execute();
     $Param=$RecupParam->fetch(PDO::FETCH_OBJ); 
@@ -37,7 +47,7 @@ if (isset($_POST['signature'])) {
 }
 
 if (isset($_SESSION['signature'])) {
-    $RecupSignature=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Signature WHERE id=:id");
+    $RecupSignature=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Signature WHERE id=:id");
     $RecupSignature->BindParam(":id", $_SESSION['signature'], PDO::PARAM_STR);
     $RecupSignature->execute();
     $ParamSignature=$RecupSignature->fetch(PDO::FETCH_OBJ); 
@@ -72,7 +82,7 @@ if ((isset($_POST['Envoyer']))&&($_POST['Envoyer']=="Envoyer")) {
                         $Hash1=substr($Code1, 0, 8);
 
                         $RepInt=$_SERVER['DOCUMENT_ROOT']."/lib/Mail/Document/";
-                        $RepExt=$Home."/lib/Mail/Document/";
+                        $RepExt=HOME."/lib/Mail/Document/";
                         
                         //upload fichier
                         
@@ -102,7 +112,7 @@ if ((isset($_POST['Envoyer']))&&($_POST['Envoyer']=="Envoyer")) {
                         $Hash2=substr($Code2, 0, 8);
 
                         $RepInt=$_SERVER['DOCUMENT_ROOT']."/lib/Mail/Document/";
-                        $RepExt=$Home."/lib/Mail/Document/";
+                        $RepExt=HOME."/lib/Mail/Document/";
                         
                         //upload fichier
                         
@@ -132,7 +142,7 @@ if ((isset($_POST['Envoyer']))&&($_POST['Envoyer']=="Envoyer")) {
                         $Hash3=substr($Code3, 0, 8);
 
                         $RepInt=$_SERVER['DOCUMENT_ROOT']."/lib/Mail/Document/";
-                        $RepExt=$Home."/lib/Mail/Document/";
+                        $RepExt=HOME."/lib/Mail/Document/";
                         
                         //upload fichier
                         
@@ -162,7 +172,7 @@ if ((isset($_POST['Envoyer']))&&($_POST['Envoyer']=="Envoyer")) {
                         $Hash4=substr($Code4, 0, 8);
 
                         $RepInt=$_SERVER['DOCUMENT_ROOT']."/lib/Mail/Document/";
-                        $RepExt=$Home."/lib/Mail/Document/";
+                        $RepExt=HOME."/lib/Mail/Document/";
                         
                         //upload fichier
                         
@@ -192,7 +202,7 @@ if ((isset($_POST['Envoyer']))&&($_POST['Envoyer']=="Envoyer")) {
                         $Hash5=substr($Code5, 0, 8);
 
                         $RepInt=$_SERVER['DOCUMENT_ROOT']."/lib/Mail/Document/";
-                        $RepExt=$Home."/lib/Mail/Document/";
+                        $RepExt=HOME."/lib/Mail/Document/";
                         
                         //upload fichier
                         
@@ -211,9 +221,9 @@ if ((isset($_POST['Envoyer']))&&($_POST['Envoyer']=="Envoyer")) {
 
                     if ($_SESSION['groupe']=="Destinataire") {
                         if ((isset($_POST['destinataire']))&&(!empty($_POST['destinataire']))) {
-                            $Destinataire2=$_SESSION['destinataire']=$_POST['destinataire'];
+                            $Destinataire=$_SESSION['destinataire']=$_POST['destinataire'];
 
-                            if (!preg_match("#^[a-z0-9._-]+@(dbmail|hotmail|live|msn).[a-z]{2,4}$#", $Destinataire2)) {
+                            if (!preg_match("#^[a-z0-9._-]+@(dbmail|hotmail|live|msn).[a-z]{2,4}$#", $Destinataire)) {
                                 $passage_ligne = "\r\n";
                             }
                             else {
@@ -224,8 +234,8 @@ if ((isset($_POST['Envoyer']))&&($_POST['Envoyer']=="Envoyer")) {
                             $Retour=$_SESSION['retour'];
                             $boundary = md5(uniqid(mt_rand()));
 
-                            $Entete = "From: \"$Societe\"<$Retour>".$passage_ligne;
-                            $Entete.= "Reply-to: \"$Societe\" <$Retour>".$passage_ligne;
+                            $Entete = "From: \"SOCIETE\"<$Retour>".$passage_ligne;
+                            $Entete.= "Reply-to: \"SOCIETE\" <$Retour>".$passage_ligne;
                             $Entete.= "MIME-Version: 1.0".$passage_ligne;
                             $Entete.= "Content-Type: multipart/mixed;".$passage_ligne." boundary=\"$boundary\"".$passage_ligne;
                             
@@ -499,13 +509,13 @@ if ((isset($_POST['Envoyer']))&&($_POST['Envoyer']=="Envoyer")) {
                                 }
                             }
 
-                            if (mail($Destinataire2, $_SESSION['objet'], $message, $Entete)===FALSE) {
+                            if (mail($Destinataire, $_SESSION['objet'], $message, $Entete)===FALSE) {
                                 $Erreur = "L'e-mail n'a pu être envoyé, vérifiez que vous l'avez entré correctement !";
                             }
                             else {     
                                 //Ajout historique
-                                $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_mailing_Historique (destinataire, objet, message, retour, type, created) VALUES(:destinataire, :objet, :message, :retour, :type, :created)");
-                                $Insert->BindParam(":destinataire", $Destinataire2, PDO::PARAM_STR);
+                                $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."mailing_Historique (destinataire, objet, message, retour, type, created) VALUES(:destinataire, :objet, :message, :retour, :type, :created)");
+                                $Insert->BindParam(":destinataire", $Destinataire, PDO::PARAM_STR);
                                 $Insert->BindParam(":objet", $_SESSION['objet'], PDO::PARAM_STR);
                                 $Insert->BindParam(":message", $_SESSION['message'], PDO::PARAM_STR);
                                 $Insert->BindParam(":retour", $_SESSION['retour'], PDO::PARAM_STR);
@@ -521,12 +531,12 @@ if ((isset($_POST['Envoyer']))&&($_POST['Envoyer']=="Envoyer")) {
                                 unset($_SESSION['retour']);
 
                                 $Valid="Votre message a bien été envoyé !";
-                                header("location:".$Home."/Admin/Mailing/Envoyer/?valid=".urlencode($Valid));
+                                header("location:".HOME."/Admin/Mailing/Envoyer/?valid=".urlencode($Valid));
                             }
                         }
                     }
                     else {
-                        $SelectDesti=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste_Diffusion WHERE liste=:liste AND diffusion=1");
+                        $SelectDesti=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste_Diffusion WHERE liste=:liste AND diffusion=1");
                         $SelectDesti->bindParam(':liste', $_SESSION['groupe'], PDO::PARAM_STR);
                         $SelectDesti->execute();
 
@@ -543,8 +553,8 @@ if ((isset($_POST['Envoyer']))&&($_POST['Envoyer']=="Envoyer")) {
                             $Retour=$_SESSION['retour'];
                             $boundary = md5(uniqid(mt_rand()));
 
-                            $Entete = "From: \"$Societe\"<$Retour>".$passage_ligne;
-                            $Entete.= "Reply-to: \"$Societe\" <$Retour>".$passage_ligne;
+                            $Entete = "From: \"SOCIETE\"<$Retour>".$passage_ligne;
+                            $Entete.= "Reply-to: \"SOCIETE\" <$Retour>".$passage_ligne;
                             $Entete.= "MIME-Version: 1.0".$passage_ligne;
                             $Entete.= "Content-Type: multipart/mixed;".$passage_ligne." boundary=\"$boundary\"".$passage_ligne;
                             
@@ -820,10 +830,10 @@ if ((isset($_POST['Envoyer']))&&($_POST['Envoyer']=="Envoyer")) {
 
                             if (mail($Desti->email, $_SESSION['objet'], $message, $Entete)===FALSE) {
                                 $Erreur = "L'e-mail n'a pu être envoyé, vérifiez que vous l'avez entré correctement !";
-                                header("location:".$Home."/Admin/Mailing/Envoyer/?erreur=".urlencode($Erreur));
+                                header("location:".HOME."/Admin/Mailing/Envoyer/?erreur=".urlencode($Erreur));
                             }
                             //Ajout historique
-                            $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_mailing_Historique (destinataire, objet, message, retour, type, created) VALUES(:destinataire, :objet, :message, :retour, :type, :created)");
+                            $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."mailing_Historique (destinataire, objet, message, retour, type, created) VALUES(:destinataire, :objet, :message, :retour, :type, :created)");
                             $Insert->BindParam(":destinataire", $Desti->email, PDO::PARAM_STR);
                             $Insert->BindParam(":objet", $_SESSION['objet'], PDO::PARAM_STR);
                             $Insert->BindParam(":message", $_SESSION['message'], PDO::PARAM_STR);
@@ -841,7 +851,7 @@ if ((isset($_POST['Envoyer']))&&($_POST['Envoyer']=="Envoyer")) {
                         unset($_SESSION['retour']);
 
                         $Valid="Votre message a bien été envoyé !";
-                        header("location:".$Home."/Admin/Mailing/Envoyer/?valid=".urlencode($Valid));
+                        header("location:".HOME."/Admin/Mailing/Envoyer/?valid=".urlencode($Valid));
                     }
                 }
             }
@@ -877,7 +887,7 @@ if (isset($Valid)) { echo "<p><font color='#009900'>".urldecode($Valid)."</font>
 <select name="type" id="type" onChange="submit()">
 <option value="NULL">-- Modèle --</option>
 <?php 
-$mailing=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Predefini");    
+$mailing=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Predefini");    
 $mailing->execute(); 
 while($Model=$mailing->fetch(PDO::FETCH_OBJ)) { ?>
     <option value="<?php echo $Model->id; ?>" <?php if ($Model->id==$_SESSION['type']) { echo "selected"; } ?> ><?php echo $Model->libele; ?></option>
@@ -889,7 +899,7 @@ while($Model=$mailing->fetch(PDO::FETCH_OBJ)) { ?>
 <select name="signature" id="signature" onChange="submit()">
 <option value="NULL">-- Signature --</option>
 <?php 
-$SignatureListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Signature");    
+$SignatureListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Signature");    
 $SignatureListe->execute(); 
 while($ListeSignature=$SignatureListe->fetch(PDO::FETCH_OBJ)) { ?>
     <option value="<?php echo $ListeSignature->id; ?>" <?php if ($ListeSignature->id==$_SESSION['signature']) { echo "selected"; } ?> ><?php echo $ListeSignature->libelle; ?></option>
@@ -902,7 +912,7 @@ while($ListeSignature=$SignatureListe->fetch(PDO::FETCH_OBJ)) { ?>
 <option value="NULL">-- Liste de diffusion --</option>
 <option value="Destinataire" <?php if ($_SESSION['groupe']=="Destinataire") { echo "selected"; } ?> >Destinataire</option>
 <?php 
-$GroupeListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Groupe");    
+$GroupeListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Groupe");    
 $GroupeListe->execute(); 
 while($Groupe=$GroupeListe->fetch(PDO::FETCH_OBJ)) { ?>
     <option value="<?php echo $Groupe->liste; ?>" <?php if ($Groupe->liste==$_SESSION['groupe']) { echo "selected"; } ?> ><?php echo $Groupe->liste; ?></option>
@@ -914,7 +924,7 @@ while($Groupe=$GroupeListe->fetch(PDO::FETCH_OBJ)) { ?>
 
 <?php 
 if ($_SESSION['groupe']=="Destinataire") { ?>
-    <input type="text" placeholder="Destinataire :" name="destinataire" require="required" value="<?php echo $Destinataire2; ?>"/><BR />
+    <input type="text" placeholder="Destinataire :" name="destinataire" require="required" value="<?php echo $Destinataire; ?>"/><BR />
 <?php }
 ?>
 <input type="text" placeholder="Objet :" name="objet" require="required" value="<?php echo $_SESSION['objet']; ?>"/><BR />
@@ -927,9 +937,9 @@ if ($_SESSION['groupe']=="Destinataire") { ?>
 <input type="file"  placeholder="pièce jointe 5" name="fichier5"/><BR /><BR />
 
 <textarea id="message" name="message" placeholder="Message*" require="required">
-<?php echo $Param->mailing ?>
+<?php if (isset($_SESSION['type'])) { echo $Param->mailing; } ?>
 <BR /><BR />
-<?php echo $ParamSignature->signature ?>
+<?php if (isset($_SESSION['signature'])) { echo $ParamSignature->signature; } ?>
 </textarea><BR />
 
 <input type="submit" name="Envoyer" value="Envoyer"/>

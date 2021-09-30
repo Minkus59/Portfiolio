@@ -1,16 +1,19 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
 
 if ($Cnx_Admin!=TRUE) {
-  header('location:'.$Home.'/Admin');
+  header('location:'.HOME.'/Admin');
 }
 
-$Erreur=$_GET['erreur'];
-$Valid=$_GET['valid'];
+if (isset($_GET['erreur']) || isset($_GET['valid'])) {
+      $Erreur=$_GET['erreur'];
+      $Valid=$_GET['valid'];
+}
 
-$SelectMail=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Historique ORDER BY id DESC");
+$SelectMail=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Historique ORDER BY id DESC");
 $SelectMail->execute();  
 
 if (isset($_POST['Modifier'])) {
@@ -18,13 +21,13 @@ if (isset($_POST['Modifier'])) {
     $Compteur=count($Selection);
 
     for($u=0;$u<$Compteur;$u++) {
-        $delete=$cnx->prepare("DELETE FROM ".$Prefix."_mailing_Historique WHERE id=:id");
+        $delete=$cnx->prepare("DELETE FROM ".DB_PREFIX."mailing_Historique WHERE id=:id");
         $delete->bindParam(':id', $Selection[$u], PDO::PARAM_STR);
         $delete->execute();
     }
 
     $Valid="E-mail supprimer avec succès";
-    header('Location:'.$Home.'/Admin/Mailing/Historique/?valid='.urlencode($Valid));
+    header('Location:'.HOME.'/Admin/Mailing/Historique/?valid='.urlencode($Valid));
 }
 ?>
 
@@ -63,7 +66,7 @@ $Adresse = preg_replace($pattern, $replace, $Mail->destinataire);
    <td><?php echo date("d-m-Y", $Mail->created); ?></td>
     <td>
     <input type="checkbox" name="selection[]" value="<?php echo $Mail->id; ?>"/>
-        <?php echo '<a title="Supprimer" href="'.$Home.'/Admin/Mailing/Historique/supprimer.php?id='.$Mail->id.'"><img src="'.$Home.'/Admin/lib/img/supprimer.png"></a></td></tr>'; ?>
+        <?php echo '<a title="Supprimer" href="'.HOME.'/Admin/Mailing/Historique/supprimer.php?id='.$Mail->id.'"><img src="'.HOME.'/Admin/lib/img/supprimer.png"></a></td></tr>'; ?>
     </td>
    </tr>
     <?php

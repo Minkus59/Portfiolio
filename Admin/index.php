@@ -1,10 +1,12 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
+ require_once($_SERVER['DOCUMENT_ROOT']."/frontend/impinfbdd/config.inc.php");
+ require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+ require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
 
-$Erreur=$_GET['erreur'];
-$Valid=$_GET['valid']; 
+if (isset($_GET['erreur']) || isset($_GET['valid'])) {
+      $Erreur=$_GET['erreur'];
+      $Valid=$_GET['valid'];
+} 
 $Now=time();
 
 if (isset($_POST['OK'])) {
@@ -20,7 +22,7 @@ if (isset($_POST['OK'])) {
        $Erreur=$Mdp[1]; 
     }
     else {
-        $RecupClient=$cnx->prepare("SELECT * FROM ".$Prefix."_compte_Admin WHERE email=:email");
+        $RecupClient=$cnx->prepare("SELECT * FROM ".DB_PREFIX."compte_Admin WHERE email=:email");
         $RecupClient->bindParam(':email', $Email, PDO::PARAM_STR);
         $RecupClient->execute();
         $RecupC=$RecupClient->fetch(PDO::FETCH_OBJ);
@@ -47,7 +49,7 @@ if (isset($_POST['OK'])) {
             $Mdp=md5($Mdp);
             $MdpCrypt=crypt($Mdp, $Salt);
 
-            $Mdp=$cnx->prepare("SELECT * FROM ".$Prefix."_compte_Admin WHERE mdp=:mdp AND email=:email");
+            $Mdp=$cnx->prepare("SELECT * FROM ".DB_PREFIX."compte_Admin WHERE mdp=:mdp AND email=:email");
             $Mdp->bindParam(':mdp', $MdpCrypt, PDO::PARAM_STR);
             $Mdp->bindParam(':email', $Email, PDO::PARAM_STR);
             $Mdp->execute();
@@ -60,7 +62,7 @@ if (isset($_POST['OK'])) {
             else {                 
                 $_SESSION['Admin']=$RecupC->hash;
                 $Valid="Vous êtes connecté ";
-                header("location:".$Home."/Admin/?valid=".urlencode($Valid));
+                header("location:".HOME."/Admin/?valid=".urlencode($Valid));
             } 
         }
     }
@@ -71,14 +73,14 @@ if ((isset($_POST['Recevoir']))&&($_POST['Recevoir']=="Recevoir")) {
     $Email=trim($_POST['email']);
     $Body ="<H1>Validation d'inscription</H1></font>          
         Veuillez cliquer sur le lien suivant pour valider votre inscription.</p>
-        <a href='".$Home."/Admin/Validation/?id=".$Email."&Valid=1'>Cliquez ici</a></p>
+        <a href='".HOME."/Admin/Validation/?id=".$Email."&Valid=1'>Cliquez ici</a></p>
         ____________________________________________________</p>
         Cordialement</p>
         <font color='#FF0000'>Cet e-mail contient des informations confidentielles et / ou protégées par la loi. Si vous n'en êtes pas le véritable destinataire ou si vous l'avez reçu par erreur, informez-en immédiatement son expéditeur et détruisez ce message. La copie et le transfert de cet e-mail sont strictement interdits.</font>";
 
     $header = "MIME-Version: 1.0\n";
     $header .= "Content-Type:multipart/mixed; boundary=\"$boundary\"\n";
-    $header .= "From: \"$Societe\"<$EmailDestinataire->email>\n";
+    $header .= "From: \"SOCIETE\"<MAIL_DESTINATAIRE>\n";
     $header .= "\n";
     
     $message="Ce message est au format MIME.\n";
@@ -93,13 +95,13 @@ if ((isset($_POST['Recevoir']))&&($_POST['Recevoir']=="Recevoir")) {
     <table style='width: 800px;' cellspacing='0' cellpadding='0'>
     <tbody>
     <tr>
-    <td style='background-color: #ced6e1;'><img src='".$Home."/lib/Photo/9fc6b3a4.png' alt='En-tete' width='800' /></td>
+    <td style='background-color: #ced6e1;'><img src='".HOME."/lib/Photo/9fc6b3a4.png' alt='En-tete' width='800' /></td>
     </tr>
     <tr>
     <td style='background-color: #ced6e1;'><br />".$Body."<br /><br /></td>
     </tr>
     <tr>
-    <td style='text-align: center; background-color: #ced6e1;'><img src='".$Home."/lib/Photo/d9c69c3a.png' alt='' width='800' /></td>
+    <td style='text-align: center; background-color: #ced6e1;'><img src='".HOME."/lib/Photo/d9c69c3a.png' alt='' width='800' /></td>
     </tr>
     </tbody>
     </table>
@@ -130,7 +132,7 @@ if ((isset($_POST['Recevoir']))&&($_POST['Recevoir']=="Recevoir")) {
 
 <?php if ($Cnx_Admin==true) { ?>
     <div id="CompteClient"><?php
-        echo '<a href="'.$Home.'/Admin/Mon-compte/">Bonjour '.$Admin->nom.'</a>'; ?>
+        echo '<a href="'.HOME.'/Admin/Mon-compte/">Bonjour '.$Admin->nom.'</a>'; ?>
      </div>
 <?php } ?>
 
@@ -142,17 +144,17 @@ if ($Cnx_Admin==false) { ?>
     <H1>Connexion</H1>
 
     <form name="form_cnx" action="" method="POST">
-    <input name="email" type="email" placeholder="E-mail" required="required"/><img src="<?php echo $Home; ?>/Admin/lib/img/intero.png" title="Adresse e-mail saisie lors de la création du compte"/>
+    <input name="email" type="email" placeholder="E-mail" required="required"/><img src="<?php echo HOME; ?>/Admin/lib/img/intero.png" title="Adresse e-mail saisie lors de la création du compte"/>
     <br />
-    <input name="mdp" type="password" placeholder="Mot de passe" required="required"/><img src="<?php echo $Home; ?>/Admin/lib/img/intero.png" title="Mot de passe saisie lors de la création du compte"/>
+    <input name="mdp" type="password" placeholder="Mot de passe" required="required"/><img src="<?php echo HOME; ?>/Admin/lib/img/intero.png" title="Mot de passe saisie lors de la création du compte"/>
     <BR /><BR />
     <input type="submit" name="OK" value="OK"/>
     </form>
-    <label><a href="<?php echo $Home; ?>/Admin/Securite/">Mot de passe oublié ?</a></label></label> - 
-    <label><a href="<?php echo $Home; ?>/Admin/Inscription/">Inscription</a></label><BR /><BR />
+    <label><a href="<?php echo HOME; ?>/Admin/Securite/">Mot de passe oublié ?</a></label></label> - 
+    <label><a href="<?php echo HOME; ?>/Admin/Inscription/">Inscription</a></label><BR /><BR />
 <?php }
 else { ?>
-    <a href="<?php echo $Home; ?>/Admin/lib/script/deconnexion.php">Déconnexion</a>
+    <a href="<?php echo HOME; ?>/Admin/lib/script/deconnexion.php">Déconnexion</a>
 <?php }
 ?>
 </article>

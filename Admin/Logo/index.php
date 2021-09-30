@@ -1,15 +1,21 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+
 
 if ($Cnx_Admin===false) {
-  header('location:'.$Home.'/Admin');
+  header('location:'.HOME.'/Admin');
 }
 
-$Erreur=$_GET['erreur'];
-$Valid=$_GET['valid'];
+if (isset($_GET['erreur']) || isset($_GET['valid'])) {
+      $Erreur=$_GET['erreur'];
+      $Valid=$_GET['valid'];
+}
 $Now=time();
+
+if ((isset($_POST['Enregistrer2']))&&(in_array($ext_origin, $ext))) {
 
 $chemin = $_FILES['photo']['name'];
 $ext = array('.jpeg', '.JPEG', '.jpg', '.JPG', '.png', '.PNG');
@@ -17,18 +23,16 @@ $ext1 = array('.jpeg', '.JPEG', '.jpg', '.JPG');
 $ext2 = array('.png', '.PNG');
 $ext_origin = strchr($chemin, '.');
 
-if ((isset($_POST['Enregistrer2']))&&(in_array($ext_origin, $ext))) {
-
 // Upload d'image
-$rep = $_SERVER['DOCUMENT_ROOT']."/lib/logo/header/";
-$REP = $Home."/lib/logo/header/";
+$rep = $_SERVER['DOCUMENT_ROOT']."/frontend/public/lib/logo/header/";
+$_SERVER['DOCUMENT_ROOT'] = HOME."/frontend/public/lib/logo/header/";
 $fichier = basename($chemin);
 $taille_origin = filesize($_FILES['photo']['tmp_name']);
 $hash = md5(uniqid(rand(), true));
-$Chemin_upload = $Home."/lib/logo/header/".$hash.$fichier."";
+$Chemin_upload = HOME."/frontend/public/lib/logo/header/".$hash.$fichier."";
 $TailleImageChoisie = @getimagesize($_FILES['photo']['tmp_name']);
 $taille_max = 10000000;
-$Default=$Home."/lib/logo/headerType.png";
+$Default= HOME."/frontend/public/lib/logo/headerType.png";
 
     if (!file_exists($rep)) {
         mkdir($rep, 0777);
@@ -52,20 +56,20 @@ $Default=$Home."/lib/logo/headerType.png";
 
         if (imagejpeg($NouvelleImage_photo , $rep.$hash.$fichier, 100)){
 
-                $SelectParam=$cnx->prepare("SELECT * FROM ".$Prefix."_Logo WHERE WHERE id='2'");
+                $SelectParam=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Logo WHERE WHERE id='2'");
                 $SelectParam->execute();
                 $Param=$SelectParam->fetch(PDO::FETCH_OBJ);
 
                 if($Param->logo!=$Default) {
-                  unlink($REP.basename($Param->logo));
+                  unlink($$_SERVER['DOCUMENT_ROOT'].basename($Param->logo));
                 }
                 
-                $Insertlogo=$cnx->prepare("UPDATE ".$Prefix."_Logo SET logo=:photo WHERE id='2'");
+                $Insertlogo=$cnx->prepare("UPDATE ".DB_PREFIX."Logo SET logo=:photo WHERE id='2'");
                 $Insertlogo->bindParam(':photo', $Chemin_upload, PDO::PARAM_STR);
                 $Insertlogo->execute();
 
                 $Valid="Logo ajouté avec succès !";
-                header("location:".$Home."/Admin/Logo/?valid=".urlencode($Valid));
+                header("location:".HOME."/Admin/Logo/?valid=".urlencode($Valid));
         }   
         else { $Erreur="Erreur !"; ErreurLog($Erreur); }    
     }
@@ -78,7 +82,7 @@ $Default=$Home."/lib/logo/headerType.png";
 
         if (imagepng($NouvelleImage_photo , $rep.$hash.$fichier, 0)){
 
-                $SelectParam=$cnx->prepare("SELECT * FROM ".$Prefix."_Logo WHERE id='2'");
+                $SelectParam=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Logo WHERE id='2'");
                 $SelectParam->execute();
                 $Param=$SelectParam->fetch(PDO::FETCH_OBJ);
 
@@ -86,12 +90,12 @@ $Default=$Home."/lib/logo/headerType.png";
                   unlink($rep.basename($Param->logo));
                 }
 
-                $Insertlogo=$cnx->prepare("UPDATE ".$Prefix."_Logo SET logo=:photo WHERE id='2'");
+                $Insertlogo=$cnx->prepare("UPDATE ".DB_PREFIX."Logo SET logo=:photo WHERE id='2'");
                 $Insertlogo->bindParam(':photo', $Chemin_upload, PDO::PARAM_STR);
                 $Insertlogo->execute();
 
                 $Valid="Logo ajouté avec succès !";
-                header("location:".$Home."/Admin/Logo/?valid=".urlencode($Valid));
+                header("location:".HOME."/Admin/Logo/?valid=".urlencode($Valid));
         }
     else { $Erreur="Erreur !"; ErreurLog($Erreur); }    
     }
@@ -100,7 +104,7 @@ $Default=$Home."/lib/logo/headerType.png";
 
 if (isset($_POST['Reset2'])) {
   
-    $SelectParam=$cnx->prepare("SELECT * FROM ".$Prefix."_Logo WHERE id='2'");
+    $SelectParam=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Logo WHERE id='2'");
     $SelectParam->execute();
     $Param=$SelectParam->fetch(PDO::FETCH_OBJ);
 
@@ -108,12 +112,12 @@ if (isset($_POST['Reset2'])) {
       unlink($rep.basename($Param->logo));
     }
     
-    $Insertlogo=$cnx->prepare("UPDATE ".$Prefix."_Logo SET logo=:photo WHERE id='2'");
+    $Insertlogo=$cnx->prepare("UPDATE ".DB_PREFIX."Logo SET logo=:photo WHERE id='2'");
     $Insertlogo->bindParam(':photo', $Default, PDO::PARAM_STR);
     $Insertlogo->execute();
 
     $Valid="Logo ajouté avec succès !";
-    header("location:".$Home."/Admin/Logo/?valid=".urlencode($Valid)); 
+    header("location:".HOME."/Admin/Logo/?valid=".urlencode($Valid)); 
 }
 
 ?>
@@ -178,8 +182,17 @@ if (isset($_POST['Reset2'])) {
 </script>
 
 <article>
-<?php if (isset($Erreur)) { echo "<p><font color='#FF0000'>".urldecode($Erreur)."</font><BR />"; }
-if (isset($Valid)) { echo "<p><font color='#009900'>".urldecode($Valid)."</font><BR />"; }   ?>
+<?php
+if (isset($Erreur)) { echo '
+<div class="alert alert-danger" role="alert">
+'.$Erreur.'
+</div></p>'; }
+
+if (isset($Valid)) { echo '
+<div class="alert alert-success" role="alert">
+'.$Valid.'
+</div></p>'; }
+?>
 
 <H1>En-tête</H1>
 <form name="Form_1" action="" method="POST" enctype="multipart/form-data">

@@ -1,23 +1,26 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
 
 if ($Cnx_Admin!=TRUE) {
-  header('location:'.$Home.'/Admin');
+  header('location:'.HOME.'/Admin');
 }
 
-$Erreur=$_GET['erreur'];
-$Valid=$_GET['valid'];
+if (isset($_GET['erreur']) || isset($_GET['valid'])) {
+      $Erreur=$_GET['erreur'];
+      $Valid=$_GET['valid'];
+}
 $Groupe=urldecode($_GET['groupe']);
 
 $Selection=$_POST['selection'];
 $Compteur=count($Selection);
 
-$SelectListeDiffusion=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste ORDER BY nom ASC");
+$SelectListeDiffusion=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste ORDER BY nom ASC");
 $SelectListeDiffusion->execute();
 
-$SelectGroupe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Groupe WHERE id=:id");
+$SelectGroupe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Groupe WHERE id=:id");
 $SelectGroupe->bindParam(':id', $Groupe, PDO::PARAM_STR);
 $SelectGroupe->execute();
 $GroupeLibele=$SelectGroupe->fetch(PDO::FETCH_OBJ);
@@ -25,13 +28,13 @@ $GroupeLibele=$SelectGroupe->fetch(PDO::FETCH_OBJ);
 if (isset($_POST['Modifier'])) {
 
     //On supprime toutes les email de la liste pour ajouter la nouvelle selection
-    $delete=$cnx->prepare("DELETE FROM ".$Prefix."_mailing_Liste_Diffusion WHERE liste=:liste AND diffusion!=2");
+    $delete=$cnx->prepare("DELETE FROM ".DB_PREFIX."mailing_Liste_Diffusion WHERE liste=:liste AND diffusion!=2");
     $delete->bindParam(':liste', $GroupeLibele->liste, PDO::PARAM_STR);
     $delete->execute();
 
     //On ajoute toutes les nouvelles adresses sauf ceux existante non diffuser
     for($u=0;$u<$Compteur;$u++) {
-        $Select=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste_Diffusion WHERE email=:email AND liste=:liste");
+        $Select=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste_Diffusion WHERE email=:email AND liste=:liste");
         $Select->bindParam(':liste', $GroupeLibele->liste, PDO::PARAM_STR);
         $Select->bindParam(':email', $Selection[$u], PDO::PARAM_STR);
         $Select->execute();
@@ -40,7 +43,7 @@ if (isset($_POST['Modifier'])) {
 
         if($Count==0) {
             $Hash = md5(uniqid(rand(), true));
-            $Ajout=$cnx->prepare("INSERT INTO ".$Prefix."_mailing_Liste_Diffusion (nom, prenom, email, liste, hash) VALUES(:nom, :prenom, :email, :liste, :hash)");
+            $Ajout=$cnx->prepare("INSERT INTO ".DB_PREFIX."mailing_Liste_Diffusion (nom, prenom, email, liste, hash) VALUES(:nom, :prenom, :email, :liste, :hash)");
             $Ajout->bindParam(':nom', $Data->nom, PDO::PARAM_STR);
             $Ajout->bindParam(':prenom', $Data->prenom, PDO::PARAM_STR);
             $Ajout->bindParam(':email', $Selection[$u], PDO::PARAM_STR);
@@ -51,7 +54,7 @@ if (isset($_POST['Modifier'])) {
     }
 
     $Valid="E-mail ajoutée avec succès";
-    header('Location:'.$Home.'/Admin/Mailing/ListeDiffusion/?groupe='.$Groupe.'&valid='.urlencode($Valid));
+    header('Location:'.HOME.'/Admin/Mailing/ListeDiffusion/?groupe='.$Groupe.'&valid='.urlencode($Valid));
 }
 ?>
 
@@ -107,7 +110,7 @@ Les élément du tableau sont détailler ci-dessous :
 <form name="liste" action="" method="POST">
 <?php
 while($ListeDiffusion=$SelectListeDiffusion->fetch(PDO::FETCH_OBJ)) { 
-    $SelectDiffusionListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste_Diffusion WHERE email=:email AND liste=:liste");
+    $SelectDiffusionListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste_Diffusion WHERE email=:email AND liste=:liste");
     $SelectDiffusionListe->bindParam(':email', $ListeDiffusion->email, PDO::PARAM_STR);
     $SelectDiffusionListe->bindParam(':liste', $GroupeLibele->liste, PDO::PARAM_STR);
     $SelectDiffusionListe->execute();
@@ -136,10 +139,10 @@ while($ListeDiffusion=$SelectListeDiffusion->fetch(PDO::FETCH_OBJ)) {
         <td>
             <?php
             if ($DiffusionListe->diffusion==1) { 
-                echo '<a title="Désactiver" href="'.$Home.'/Admin/Mailing/ListeDiffusion/desactiver.php?id='.$DiffusionListe->id.'&groupe='.$Groupe.'"><img src="'.$Home.'/Admin/lib/img/desactiver.png" alt="Désactiver"></a>';
+                echo '<a title="Désactiver" href="'.HOME.'/Admin/Mailing/ListeDiffusion/desactiver.php?id='.$DiffusionListe->id.'&groupe='.$Groupe.'"><img src="'.HOME.'/Admin/lib/img/desactiver.png" alt="Désactiver"></a>';
             } 
             else { 
-                echo '<a title="Activer" href="'.$Home.'/Admin/Mailing/ListeDiffusion/activer.php?id='.$DiffusionListe->id.'&groupe='.$Groupe.'"><img src="'.$Home.'/Admin/lib/img/activer.png" alt="Activer"></a>';
+                echo '<a title="Activer" href="'.HOME.'/Admin/Mailing/ListeDiffusion/activer.php?id='.$DiffusionListe->id.'&groupe='.$Groupe.'"><img src="'.HOME.'/Admin/lib/img/activer.png" alt="Activer"></a>';
             } 
             ?>
         </td>

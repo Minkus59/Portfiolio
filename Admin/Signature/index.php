@@ -1,18 +1,24 @@
 <?php 
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
+
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+
 
 if ($Cnx_Admin!=TRUE) {
-  header('location:'.$Home.'/Admin');
+  header('location:'.HOME.'/Admin');
 }
 
-$Erreur=$_GET[erreur];
-$Valid=$_GET['valid'];
+if (isset($_GET['erreur']) || isset($_GET['valid'])) {
+  $Erreur=$_GET['erreur'];
+  $Valid=$_GET['valid'];
+}
 
-$SelectFichier=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Original ORDER BY id DESC");
+$SelectFichier=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Original ORDER BY id DESC");
 $SelectFichier->execute();
 
-$SelectFichierSigner=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Signer ORDER BY id DESC");
+$SelectFichierSigner=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Signer ORDER BY id DESC");
 $SelectFichierSigner->execute();
 
 ?>
@@ -24,13 +30,22 @@ $SelectFichierSigner->execute();
 <?php require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/menu.inc.php"); ?>
 
 <article>
-<?php if (isset($Erreur)) { echo "<font color='#FF0000'>".$Erreur."</font><BR />"; }
-if (isset($Valid)) { echo "<font color='#009900'>".$Valid."</font><BR />"; } ?>
+        <?php
+        if (isset($Erreur)) { echo '
+            <div class="alert alert-danger" role="alert">
+            '.$Erreur.'
+        </div></p>'; }
+
+        if (isset($Valid)) { echo '
+            <div class="alert alert-success" role="alert">
+            '.$Valid.'
+            </div></p>'; }
+        ?>
 
 <H1>Télécharger un document</H1>
 
-<form name="form_fichier" action="<?php echo $Home; ?>/Admin/Signature/Upload/" method="POST" enctype="multipart/form-data">
-<input type="file" placeholder="fichier" name="fichier[]" required="required" onChange="submit()" multiple/><span class="col_3"><img src="<?php echo $Home; ?>/Admin/lib/img/intero.png" alt="Information" title="Fichier au format (.pdf)" /></span>
+<form name="form_fichier" action="<?php echo HOME ?>/Admin/Signature/Upload/" method="POST" enctype="multipart/form-data">
+<input type="file" placeholder="fichier" name="fichier[]" required="required" onChange="submit()" multiple/><span class="col_3"><img src="<?php echo HOME ?>/Admin/lib/img/intero.png" alt="Information" title="Fichier au format (.pdf)" /></span>
 </form><BR />
 
 <H1>Liste des documents</H1>
@@ -42,10 +57,10 @@ if (isset($Valid)) { echo "<font color='#009900'>".$Valid."</font><BR />"; } ?>
       <li>
       <table class="Admin">
         <tr><th>Aperçu</th><th>Original</th><th>Date</th><th>Action</th></tr>
-        <form name="FormReSignMultiple" action="<?php echo $Home; ?>/Admin/Signature/SignerMulti/" method="POST">
+        <form name="FormReSignMultiple" action="<?php echo HOME ?>/Admin/Signature/SignerMulti/" method="POST">
         <?php
         while ($Fichier=$SelectFichier->fetch(PDO::FETCH_OBJ)) {
-              $SelectArchiveJpg = $cnx -> prepare("SELECT * FROM ".$Prefix."_Signature_Original_Jpg WHERE page='1' AND hash=:hash");
+              $SelectArchiveJpg = $cnx -> prepare("SELECT * FROM ".DB_PREFIX."Signature_Original_Jpg WHERE page='1' AND hash=:hash");
               $SelectArchiveJpg-> BindParam(":hash", $Fichier->hash, PDO::PARAM_STR);
               $SelectArchiveJpg-> execute(); 
               $ArchiveJpg=$SelectArchiveJpg->fetch(PDO::FETCH_OBJ);
@@ -58,8 +73,8 @@ if (isset($Valid)) { echo "<font color='#009900'>".$Valid."</font><BR />"; } ?>
           <input type="checkbox" name="selection[]" value="<?php echo $Fichier->hash; ?>"/>
           </td>
           <td>
-            <a href="<?php echo $Home; ?>/Admin/Signature/Signer/?id=<?php echo $Fichier->hash; ?>"><acronym title="Ajouter une signature"><img src="<?php echo $Home; ?>/Admin/lib/img/modifier.png"/></acronym></a>
-            <a href="<?php echo $Home; ?>/Admin/Signature/supprimer.php?id=<?php echo $Fichier->id; ?>"><acronym title="Supprimer le document"><img src="<?php echo $Home; ?>/Admin/lib/img/supprimer.png"/></acronym></a>
+            <a href="<?php echo HOME ?>/Admin/Signature/Signer/?id=<?php echo $Fichier->hash; ?>"><acronym title="Ajouter une signature"><img src="<?php echo HOME ?>/Admin/lib/img/modifier.png"/></acronym></a>
+            <a href="<?php echo HOME ?>/Admin/Signature/supprimer.php?id=<?php echo $Fichier->id; ?>"><acronym title="Supprimer le document"><img src="<?php echo HOME ?>/Admin/lib/img/supprimer.png"/></acronym></a>
           </td>
           </tr>
         <?php
@@ -76,7 +91,7 @@ if (isset($Valid)) { echo "<font color='#009900'>".$Valid."</font><BR />"; } ?>
     <ul class="sub">
       <li>
         <table class="Admin">
-        <form name="FormSignMultiple" action="<?php echo $Home; ?>/Admin/Signature/ResignerMulti/" method="POST">
+        <form name="FormSignMultiple" action="<?php echo HOME ?>/Admin/Signature/ResignerMulti/" method="POST">
         <tr><th>Aperçu</th><th>Signer</th><th>Date</th><th>Selection</th><th>Action</th></tr>
 
         <?php
@@ -86,7 +101,7 @@ if (isset($Valid)) { echo "<font color='#009900'>".$Valid."</font><BR />"; } ?>
                 $NbPage=1;
               }
               elseif ($Page=="Last") {
-                $SelectJpg2 = $cnx -> prepare("SELECT * FROM ".$Prefix."_Signature_Signer_Jpg WHERE hash=:hash");
+                $SelectJpg2 = $cnx -> prepare("SELECT * FROM ".DB_PREFIX."Signature_Signer_Jpg WHERE hash=:hash");
                 $SelectJpg2-> BindParam(":hash", $Fichier1->hash, PDO::PARAM_STR);
                 $SelectJpg2-> execute(); 
                 $AfficheJpg2=$SelectJpg2->fetch(PDO::FETCH_OBJ);
@@ -97,7 +112,7 @@ if (isset($Valid)) { echo "<font color='#009900'>".$Valid."</font><BR />"; } ?>
                 $NbPage=$Fichier1->page;
               }
 
-              $SelectArchiveJpg1 = $cnx -> prepare("SELECT * FROM ".$Prefix."_Signature_Signer_Jpg WHERE page=:page AND hash=:hash");
+              $SelectArchiveJpg1 = $cnx -> prepare("SELECT * FROM ".DB_PREFIX."Signature_Signer_Jpg WHERE page=:page AND hash=:hash");
               $SelectArchiveJpg1-> BindParam(":hash", $Fichier1->hash, PDO::PARAM_STR);
               $SelectArchiveJpg1->BindParam(":page", $NbPage, PDO::PARAM_STR);
               $SelectArchiveJpg1-> execute(); 
@@ -111,8 +126,8 @@ if (isset($Valid)) { echo "<font color='#009900'>".$Valid."</font><BR />"; } ?>
           <input type="checkbox" name="selection[]" value="<?php echo $Fichier1->hash; ?>"/>
           </td>
           <td>
-            <a href="<?php echo $Home; ?>/Admin/Signature/Resigner/?id=<?php echo $Fichier1->hash; ?>"><acronym title="Ajouter une signature"><img src="<?php echo $Home; ?>/Admin/lib/img/modifier.png"/></acronym></a>
-            <a href="<?php echo $Home; ?>/Admin/Signature/supprimer_Signer.php?id=<?php echo $Fichier1->id; ?>"><acronym title="Supprimer le document"><img src="<?php echo $Home; ?>/Admin/lib/img/supprimer.png"/></acronym></a>
+            <a href="<?php echo HOME ?>/Admin/Signature/Resigner/?id=<?php echo $Fichier1->hash; ?>"><acronym title="Ajouter une signature"><img src="<?php echo HOME ?>/Admin/lib/img/modifier.png"/></acronym></a>
+            <a href="<?php echo HOME ?>/Admin/Signature/supprimer_Signer.php?id=<?php echo $Fichier1->id; ?>"><acronym title="Supprimer le document"><img src="<?php echo HOME ?>/Admin/lib/img/supprimer.png"/></acronym></a>
           </td>
           </tr>
         <?php

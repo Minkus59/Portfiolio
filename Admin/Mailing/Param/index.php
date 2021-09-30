@@ -1,27 +1,30 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
 
 if ($Cnx_Admin===false) {
-  header('location:'.$Home.'/Admin');
+  header('location:'.HOME.'/Admin');
 }
 
-$Erreur=$_GET['erreur'];
-$Valid=$_GET['valid']; 
+if (isset($_GET['erreur']) || $_GET['valid']) {
+    $Erreur=$_GET['erreur'];
+    $Valid=$_GET['valid']; 
+}
 
-$RecupEmail=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Parametre");
+$RecupEmail=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Parametre");
 $RecupEmail->execute();
 $Info=$RecupEmail->fetch(PDO::FETCH_OBJ);
 
 if (isset($_POST['Valider'])) {
-    $Preparation7=$cnx->query("CREATE TABLE ".$Prefix."_mailing_Groupe (
+    $Preparation7=$cnx->query("CREATE TABLE ".DB_PREFIX."mailing_Groupe (
         `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
         `liste` varchar(50) NOT NULL,
         PRIMARY KEY (`id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8"); 
 
-        $Preparation8=$cnx->query("CREATE TABLE ".$Prefix."_mailing_Historique (
+        $Preparation8=$cnx->query("CREATE TABLE ".DB_PREFIX."mailing_Historique (
         `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
         `destinataire` longtext NOT NULL,
         `objet` longtext NOT NULL,
@@ -32,7 +35,7 @@ if (isset($_POST['Valider'])) {
         PRIMARY KEY (`id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8"); 
 
-        $Preparation9=$cnx->query("CREATE TABLE ".$Prefix."_mailing_Liste (
+        $Preparation9=$cnx->query("CREATE TABLE ".DB_PREFIX."mailing_Liste (
         `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
         `nom` longtext,
         `prenom` longtext,
@@ -40,7 +43,7 @@ if (isset($_POST['Valider'])) {
         PRIMARY KEY (`id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8"); 
 
-        $Preparation10=$cnx->query("CREATE TABLE ".$Prefix."_mailing_Liste_Diffusion (
+        $Preparation10=$cnx->query("CREATE TABLE ".DB_PREFIX."mailing_Liste_Diffusion (
             `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
             `nom` longtext,
             `prenom` longtext,
@@ -51,20 +54,20 @@ if (isset($_POST['Valider'])) {
             PRIMARY KEY (`id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8"); 
 
-        $Preparation11=$cnx->query("CREATE TABLE ".$Prefix."_mailing_Parametre (
+        $Preparation11=$cnx->query("CREATE TABLE ".DB_PREFIX."mailing_Parametre (
             `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
             `email` varchar(80) NOT NULL,
             PRIMARY KEY (`id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8"); 
 
-        $Preparation12=$cnx->query("CREATE TABLE ".$Prefix."_mailing_Predefini (
+        $Preparation12=$cnx->query("CREATE TABLE ".DB_PREFIX."mailing_Predefini (
             `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
             `libele` longtext NOT NULL,
             `mailing` longtext NOT NULL,
             PRIMARY KEY (`id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8"); 
 
-        $Preparation13=$cnx->query("CREATE TABLE ".$Prefix."_mailing_Signature (
+        $Preparation13=$cnx->query("CREATE TABLE ".DB_PREFIX."mailing_Signature (
             `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
             `libelle` longtext NOT NULL,
             `signature` longtext NOT NULL,
@@ -77,25 +80,25 @@ if (isset($_POST['Valider'])) {
         $Erreur=$Email[1];
     }
     else {
-        $VerifEmail=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Parametre");
+        $VerifEmail=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Parametre");
         $VerifEmail->execute();
         $Rows=$VerifEmail->rowCount();
         
         if ($Rows==0) {
-            $InsertEmail=$cnx->prepare("INSERT INTO ".$Prefix."_mailing_Parametre (email) VALUES (:email)");
+            $InsertEmail=$cnx->prepare("INSERT INTO ".DB_PREFIX."mailing_Parametre (email) VALUES (:email)");
             $InsertEmail->bindParam(':email', $Email, PDO::PARAM_STR);
             $InsertEmail->execute();  
 
             $Valid="Enregistrement réussie";
-            header("location:".$Home."/Admin/Mailing/Param/?valid=".$Valid);
+            header("location:".HOME."/Admin/Mailing/Param/?valid=".$Valid);
         }
         else {
-            $InsertEmail=$cnx->prepare("UPDATE ".$Prefix."_mailing_Parametre SET email=:email");
+            $InsertEmail=$cnx->prepare("UPDATE ".DB_PREFIX."mailing_Parametre SET email=:email");
             $InsertEmail->bindParam(':email', $Email, PDO::PARAM_STR);
             $InsertEmail->execute();
 
             $Valid="Enregistrement réussie";
-            header("location:".$Home."/Admin/Mailing/Param/?valid=".$Valid);
+            header("location:".HOME."/Admin/Mailing/Param/?valid=".$Valid);
         }
     }
 }

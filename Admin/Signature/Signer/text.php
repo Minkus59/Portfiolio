@@ -1,6 +1,10 @@
 <?php 
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
+
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+
 
 $Text=$_POST['text'];
 

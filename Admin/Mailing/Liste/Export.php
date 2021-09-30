@@ -1,8 +1,9 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-
-$Select=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste ORDER BY nom ASC");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+$Select=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste ORDER BY nom ASC");
 $Select->execute();
 
 $Ouverture = fopen("contact.csv", "w+");

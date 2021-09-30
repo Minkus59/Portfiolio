@@ -1,16 +1,19 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
 
 if ($Cnx_Admin===false) {
-  header('location:'.$Home.'/Admin');
+  header('location:'.HOME.'/Admin');
 }
 
-$Erreur=$_GET['erreur'];
-$Valid=$_GET['valid']; 
+if (isset($_GET['erreur']) || $_GET['valid']) {
+    $Erreur=$_GET['erreur'];
+    $Valid=$_GET['valid']; 
+}
 
-$Recupinfo=$cnx->prepare("SELECT * FROM ".$Prefix."_Information");
+$Recupinfo=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Information");
 $Recupinfo->execute();
 $Info=$Recupinfo->fetch(PDO::FETCH_OBJ);
 
@@ -23,34 +26,34 @@ if (isset($_POST['Valider'])) {
         $Erreur="Veuillez saisir le nom d'un directeur de la publication";
     }
     else {
-        $Verif=$cnx->prepare("SELECT * FROM ".$Prefix."_Information");
+        $Verif=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Information");
         $Verif->execute();
         $Rows=$Verif->rowCount();
         
         if ($Rows==0) {
-            $Preparation=$cnx->query("CREATE TABLE IF NOT EXISTS ".$Prefix."_Information (
+            $Preparation=$cnx->query("CREATE TABLE IF NOT EXISTS ".DB_PREFIX."Information (
                 `id` int(32) unsigned NOT NULL AUTO_INCREMENT,
                 `publisher` longtext NOT NULL,
                 `adresse` longtext DEFAULT NULL,
                 PRIMARY KEY (`id`)
                 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 
-            $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_Information (publisher, adresse) VALUES (:publisher, :adresse)");
+            $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."Information (publisher, adresse) VALUES (:publisher, :adresse)");
             $Insert->bindParam(':publisher', $Publisher, PDO::PARAM_STR);
             $Insert->bindParam(':adresse', $Adresse, PDO::PARAM_STR);
             $Insert->execute();  
 
             $Valid="Enregistrement réussie";
-            header("location:".$Home."/Admin/Information/?valid=".$Valid);
+            header("location:".HOME."/Admin/Information/?valid=".$Valid);
         }
         else {
-            $Insert=$cnx->prepare("UPDATE ".$Prefix."_Information SET publisher=:publisher, adresse=:adresse WHERE id='1'");
+            $Insert=$cnx->prepare("UPDATE ".DB_PREFIX."Information SET publisher=:publisher, adresse=:adresse WHERE id='1'");
             $Insert->bindParam(':publisher', $Publisher, PDO::PARAM_STR);
             $Insert->bindParam(':adresse', $Adresse, PDO::PARAM_STR);
             $Insert->execute();
 
             $Valid="Enregistrement réussie";
-            header("location:".$Home."/Admin/Information/?valid=".$Valid);
+            header("location:".HOME."/Admin/Information/?valid=".$Valid);
         }
     }
 }

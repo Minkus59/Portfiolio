@@ -1,10 +1,11 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
 
 if ($Cnx_Admin!=TRUE) {
-  header('location:'.$Home.'/Admin');
+  header('location:'.HOME.'/Admin');
 }
 
 $Erreur=$_GET['erreur'];
@@ -13,7 +14,7 @@ $Groupe=urldecode($_GET['groupe']);
 
 if ((!empty($_GET['id']))&&(isset($_POST['oui']))) {
 
-    $Select=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste_Diffusion WHERE id=:id");
+    $Select=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste_Diffusion WHERE id=:id");
     $Select->bindParam(':id', $Id, PDO::PARAM_INT);
     $Select->execute();
     $Diffusion=$Select->fetch(PDO::FETCH_OBJ);
@@ -22,16 +23,16 @@ if ((!empty($_GET['id']))&&(isset($_POST['oui']))) {
         $Erreur="Impossible de désactiver la diffusion sur cette email, le client ne souhaite plus reçevoir d'e-mail";
     }
     else {
-        $Update=$cnx->prepare("UPDATE ".$Prefix."_mailing_Liste_Diffusion SET diffusion=0 WHERE id=:id");
+        $Update=$cnx->prepare("UPDATE ".DB_PREFIX."mailing_Liste_Diffusion SET diffusion=0 WHERE id=:id");
         $Update->bindParam(':id', $Id, PDO::PARAM_INT);
         $Update->execute();
 
-        header('Location:'.$Home.'/Admin/Mailing/ListeDiffusion/?groupe='.$Groupe);
+        header('Location:'.HOME.'/Admin/Mailing/ListeDiffusion/?groupe='.$Groupe);
     }
 }
 
 if (isset($_POST['non'])) {  
-    header('Location:'.$Home.'/Admin/Mailing/ListeDiffusion/?groupe='.$Groupe);
+    header('Location:'.HOME.'/Admin/Mailing/ListeDiffusion/?groupe='.$Groupe);
 }
 ?>
 

@@ -1,15 +1,19 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
+
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+
 
 if ($Cnx_Admin!=TRUE) {
-  header('location:'.$Home.'/Admin');
+  header('location:'.HOME.'/Admin');
 }
 
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/FPDF/fpdf.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/FPDI-1.6.1/fpdi.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/frontend/lib/FPDF/fpdf.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/frontend/lib/FPDI-1.6.1/fpdi.php");
 
-$SelectFichier=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Tampon ORDER BY id DESC");
+$SelectFichier=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Tampon ORDER BY id DESC");
 $SelectFichier->execute();
 
 $Id=$_GET['id'];
@@ -25,7 +29,7 @@ if (isset($_POST['Signer'])) {
     $HashOriginal=$_SESSION['hash'];
     $Action=$_POST['action'];
 
-    $DocumentOriginal=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Original WHERE hash=:hash");
+    $DocumentOriginal=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Original WHERE hash=:hash");
     $DocumentOriginal->BindParam(":hash", $HashOriginal, PDO::PARAM_STR);
     $DocumentOriginal->execute();
     $Fichier=$DocumentOriginal->fetch(PDO::FETCH_OBJ);
@@ -69,7 +73,7 @@ if (isset($_POST['Signer'])) {
         }
         $FichierJpg2=$NomFichier.".jpg";
 
-        $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_Signature_Signer_Jpg (fichier, page, created, hash) VALUES (:fichier, :page, :created, :hash)");
+        $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."Signature_Signer_Jpg (fichier, page, created, hash) VALUES (:fichier, :page, :created, :hash)");
         $Insert->BindParam(":fichier", $FichierJpg, PDO::PARAM_STR);
         $Insert->BindParam(":page", $pageNo, PDO::PARAM_STR);
         $Insert->BindParam(":created", $Now, PDO::PARAM_STR);
@@ -92,7 +96,7 @@ if (isset($_POST['Signer'])) {
                 $pdf->cell(15, 4, $Date, 0, 0, 'L');
             }
             else {
-                $SelectTamponPerso=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Tampon WHERE id=:id");
+                $SelectTamponPerso=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Tampon WHERE id=:id");
                 $SelectTamponPerso->BindParam(':id', $Action, PDO::PARAM_STR);
                 $SelectTamponPerso->execute();
                 $TamponPerso=$SelectTamponPerso->fetch(PDO::FETCH_OBJ);   
@@ -117,7 +121,7 @@ if (isset($_POST['Signer'])) {
                 $pdf->cell(15, 4, $Date, 0, 0, 'L');
             }
             else {
-                $SelectTamponPerso=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Tampon WHERE id=:id");
+                $SelectTamponPerso=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Tampon WHERE id=:id");
                 $SelectTamponPerso->BindParam(':id', $Action, PDO::PARAM_STR);
                 $SelectTamponPerso->execute();
                 $TamponPerso=$SelectTamponPerso->fetch(PDO::FETCH_OBJ);   
@@ -145,7 +149,7 @@ if (isset($_POST['Signer'])) {
                 $pdf->cell(15, 4, $Date, 0, 0, 'L');
             }
             else {
-                $SelectTamponPerso=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Tampon WHERE id=:id");
+                $SelectTamponPerso=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Tampon WHERE id=:id");
                 $SelectTamponPerso->BindParam(':id', $Action, PDO::PARAM_STR);
                 $SelectTamponPerso->execute();
                 $TamponPerso=$SelectTamponPerso->fetch(PDO::FETCH_OBJ);   
@@ -165,7 +169,7 @@ if (isset($_POST['Signer'])) {
         $Erreur= "Erreur de chargement des images, veuillez réassayer !<BR />";
     }
 
-    $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_Signature_Signer (fichier, page, created, hash) VALUES (:fichier, :page, :created, :hash)");
+    $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."Signature_Signer (fichier, page, created, hash) VALUES (:fichier, :page, :created, :hash)");
     $Insert->BindParam(":fichier", $NomFichierPdf, PDO::PARAM_STR);
     $Insert->BindParam(":page", $Page, PDO::PARAM_STR);
     $Insert->BindParam(":created", $Now, PDO::PARAM_STR);
@@ -182,7 +186,7 @@ if (isset($_POST['Ajuster'])) {
     $Action=$_POST['action'];
     $HashOriginal=$_SESSION['hash'];
 
-    $DocumentOriginal=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Original WHERE hash=:hash");
+    $DocumentOriginal=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Original WHERE hash=:hash");
     $DocumentOriginal->BindParam(":hash", $HashOriginal, PDO::PARAM_STR);
     $DocumentOriginal->execute();
     $Fichier=$DocumentOriginal->fetch(PDO::FETCH_OBJ);
@@ -240,7 +244,7 @@ if (isset($_POST['Ajuster'])) {
                 $pdf->cell(15, 4, $Date, 0, 0, 'L');
             }
             else {
-                $SelectTamponPerso=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Tampon WHERE id=:id");
+                $SelectTamponPerso=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Tampon WHERE id=:id");
                 $SelectTamponPerso->BindParam(':id', $Action, PDO::PARAM_STR);
                 $SelectTamponPerso->execute();
                 $TamponPerso=$SelectTamponPerso->fetch(PDO::FETCH_OBJ);   
@@ -265,7 +269,7 @@ if (isset($_POST['Ajuster'])) {
                 $pdf->cell(15, 4, $Date, 0, 0, 'L');
             }
             else {
-                $SelectTamponPerso=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Tampon WHERE id=:id");
+                $SelectTamponPerso=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Tampon WHERE id=:id");
                 $SelectTamponPerso->BindParam(':id', $Action, PDO::PARAM_STR);
                 $SelectTamponPerso->execute();
                 $TamponPerso=$SelectTamponPerso->fetch(PDO::FETCH_OBJ);   
@@ -293,7 +297,7 @@ if (isset($_POST['Ajuster'])) {
                 $pdf->cell(15, 4, $Date, 0, 0, 'L');
             }
             else {
-                $SelectTamponPerso=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Tampon WHERE id=:id");
+                $SelectTamponPerso=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Tampon WHERE id=:id");
                 $SelectTamponPerso->BindParam(':id', $Action, PDO::PARAM_STR);
                 $SelectTamponPerso->execute();
                 $TamponPerso=$SelectTamponPerso->fetch(PDO::FETCH_OBJ);   
@@ -316,17 +320,17 @@ if (isset($_POST['Ajuster'])) {
     unset($_SESSION['hash2']);
 
     $Valid="Document Ajuster avec succès";
-    header('refresh: 0; url='.$Home.'/Admin/Signature/?valid='.urlencode($Valid));
+    header('refresh: 0; url='.HOME.'/Admin/Signature/?valid='.urlencode($Valid));
 }
 
 if (isset($_SESSION['hash2'])) {  
-    $DocumentJpg=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Signer_Jpg WHERE hash=:hash");
+    $DocumentJpg=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Signer_Jpg WHERE hash=:hash");
     $DocumentJpg->BindParam(":hash", $_SESSION['hash2'], PDO::PARAM_STR);
     $DocumentJpg->execute();
     $CountPage=$DocumentJpg->rowCount();
 }
 else {
-    $DocumentJpg=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Original_Jpg WHERE hash=:hash");
+    $DocumentJpg=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Original_Jpg WHERE hash=:hash");
     $DocumentJpg->BindParam(":hash", $_SESSION['hash'], PDO::PARAM_STR);
     $DocumentJpg->execute();
     $CountPage=$DocumentJpg->rowCount();
@@ -336,14 +340,14 @@ if (isset($_POST['Terminer'])) {
     unset($_SESSION['hash']);
     unset($_SESSION['hash2']);
 
-    header('refresh: 0; url='.$Home.'/Admin/Signature/');
+    header('refresh: 0; url='.HOME.'/Admin/Signature/');
 }
 
 if (isset($_POST['Annuler'])) {
     unset($_SESSION['hash']);
     unset($_SESSION['hash2']);
 
-    header('refresh: 0; url='.$Home.'/Admin/Signature/');
+    header('refresh: 0; url='.HOME.'/Admin/Signature/');
 }
 ?>
 
@@ -407,7 +411,7 @@ if (isset($_SESSION['hash2'])) {
                 } 
             }; 
             
-            req.open('POST', '".$Home."/Admin/Signature/Signer/apercuSigner.php', true);
+            req.open('POST', '".HOME."/Admin/Signature/Signer/apercuSigner.php', true);
             req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             //envoi
             req.send(data);  
@@ -447,7 +451,7 @@ else {
                 } 
             }; 
             
-            req.open('POST', '".$Home."/Admin/Signature/Signer/apercu.php', true);
+            req.open('POST', '".HOME."/Admin/Signature/Signer/apercu.php', true);
             req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             //envoi
             req.send(data);  
@@ -463,8 +467,17 @@ else {
 <?php require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/menu.inc.php"); ?>
 
 <article>
-<?php if (isset($Erreur)) { echo "<font color='#FF0000'>".$Erreur."</font><BR />"; }
-if (isset($Valid)) { echo "<font color='#009900'>".$Valid."</font><BR />"; } ?>
+        <?php
+        if (isset($Erreur)) { echo '
+            <div class="alert alert-danger" role="alert">
+            '.$Erreur.'
+        </div></p>'; }
+
+        if (isset($Valid)) { echo '
+            <div class="alert alert-success" role="alert">
+            '.$Valid.'
+            </div></p>'; }
+        ?>
 
 <H1>Signer un document</H1>
 

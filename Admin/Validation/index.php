@@ -1,7 +1,8 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
 
 
 $Client=trim($_GET['id']);
@@ -9,12 +10,12 @@ $Valided=trim($_GET['Valid']);
 
 if ((isset($Client))&&(!empty($Client))&&(isset($Valided))&&(!empty($Valided))) {
 
-    $VerifClient=$cnx->prepare("SELECT * FROM ".$Prefix."_compte_Admin WHERE email=:email");
+    $VerifClient=$cnx->prepare("SELECT * FROM ".DB_PREFIX."compte_Admin WHERE email=:email");
     $VerifClient->bindParam(':email', $Client, PDO::PARAM_STR);
     $VerifClient->execute();
     $NbRowsClient=$VerifClient->rowCount();
 
-    $VerifValid=$cnx->prepare("SELECT * FROM ".$Prefix."_compte_Admin WHERE activate=:valid AND email=:email");
+    $VerifValid=$cnx->prepare("SELECT * FROM ".DB_PREFIX."compte_Admin WHERE activate=:valid AND email=:email");
     $VerifValid->bindParam(':valid', $Valided, PDO::PARAM_STR);
     $VerifValid->bindParam(':email', $Client, PDO::PARAM_STR);
     $VerifValid->execute();
@@ -36,12 +37,12 @@ if ((isset($Client))&&(!empty($Client))&&(isset($Valided))&&(!empty($Valided))) 
     }
 
     else {   
-        $InsertValided=$cnx->prepare("UPDATE ".$Prefix."_compte_Admin SET activate=1 WHERE email=:email");
+        $InsertValided=$cnx->prepare("UPDATE ".DB_PREFIX."compte_Admin SET activate=1 WHERE email=:email");
         $InsertValided->bindParam(':email', $Client, PDO::PARAM_STR);
         $InsertValided->execute();
 
         if ((!$VerifValid)||(!$VerifClient)||(!$InsertValided)) {
-            $SupprValided=$cnx->prepare("UPDATE ".$Prefix."_compte_Admin SET activate=0 WHERE email=:email");
+            $SupprValided=$cnx->prepare("UPDATE ".DB_PREFIX."compte_Admin SET activate=0 WHERE email=:email");
             $SupprValided->bindParam(':email', $Client, PDO::PARAM_STR);
             $SupprValided->execute();
 
@@ -70,8 +71,17 @@ else {
 
 <article class="ArticleAccueilAdmin">
 
-<?php if (isset($Erreur)) { echo "<p><font color='#FF0000'>".urldecode($Erreur)."</font><BR />"; }
-if (isset($Valid)) { echo "<p><font color='#009900'>".urldecode($Valid)."</font><BR />"; }   ?>
+<?php
+if (isset($Erreur)) { echo '
+<div class="alert alert-danger" role="alert">
+'.$Erreur.'
+</div></p>'; }
+
+if (isset($Valid)) { echo '
+<div class="alert alert-success" role="alert">
+'.$Valid.'
+</div></p>'; }
+?>
 </article>
 
 <?php require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/footer.inc.php"); ?>

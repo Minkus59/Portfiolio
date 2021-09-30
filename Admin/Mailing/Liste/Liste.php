@@ -1,8 +1,9 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-
-$Select=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste ORDER BY nom ASC");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+$Select=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste ORDER BY nom ASC");
 $Select->execute();
 
 if (isset($_POST['Supprimer'])) {
@@ -10,13 +11,13 @@ if (isset($_POST['Supprimer'])) {
     $Compteur=count($Selection);
 
     for($u=0;$u<$Compteur;$u++) {
-        $delete=$cnx->prepare("DELETE FROM ".$Prefix."_mailing_Liste WHERE id=:id");
+        $delete=$cnx->prepare("DELETE FROM ".DB_PREFIX."mailing_Liste WHERE id=:id");
         $delete->bindParam(':id', $Selection[$u], PDO::PARAM_STR);
         $delete->execute();
     }
 
     $Valid="E-mail supprimer avec succès";
-    header('Location:'.$Home.'/Admin/Mailing/Liste/?valid='.urlencode($Valid));
+    header('Location:'.HOME.'/Admin/Mailing/Liste/?valid='.urlencode($Valid));
 }
 
 if (isset($_POST['ExporterListe'])) {
@@ -27,7 +28,7 @@ if (isset($_POST['ExporterListe'])) {
     $Compteur=count($Selection);
 
     for($u=0;$u<$Compteur;$u++) {
-        $SelectListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste WHERE id=:id");
+        $SelectListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste WHERE id=:id");
         $SelectListe->bindParam(':id', $Selection[$u], PDO::PARAM_STR);
         $SelectListe->execute();
         $AjoutListe=$SelectListe->fetch(PDO::FETCH_OBJ);

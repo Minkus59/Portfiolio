@@ -1,7 +1,8 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
 
 $Erreur=$_GET['erreur'];
 $Client=$_GET['id'];
@@ -24,7 +25,7 @@ if (isset($_POST['Valider'])) {
            ErreurLog($Erreur);
         }
     else {
-        $RecupHash=$cnx->prepare("SELECT * FROM ".$Prefix."_Admin_secu_mdp WHERE hash=:hash");
+        $RecupHash=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Admin_secu_mdp WHERE hash=:hash");
         $RecupHash->bindParam(':hash', $Hash, PDO::PARAM_STR);
         $RecupHash->execute();
 
@@ -35,7 +36,7 @@ if (isset($_POST['Valider'])) {
                  ErreurLog($Erreur);
          }
          else {
-              $RecupCreated=$cnx->prepare("SELECT (created) FROM ".$Prefix."_compte_Admin WHERE email=:email");
+              $RecupCreated=$cnx->prepare("SELECT (created) FROM ".DB_PREFIX."compte_Admin WHERE email=:email");
               $RecupCreated->bindParam(':email', $Client, PDO::PARAM_STR);
               $RecupCreated->execute();
 
@@ -43,18 +44,18 @@ if (isset($_POST['Valider'])) {
               $Salt=md5($DateCrea->created);
               $MdpCrypt=crypt($Mdp2, $Salt);
 
-              $InsertMdp=$cnx->prepare("UPDATE ".$Prefix."_compte_Admin SET mdp=:mdpcrypt WHERE email=:email");
+              $InsertMdp=$cnx->prepare("UPDATE ".DB_PREFIX."compte_Admin SET mdp=:mdpcrypt WHERE email=:email");
               $InsertMdp->bindParam(':mdpcrypt', $MdpCrypt, PDO::PARAM_STR);
               $InsertMdp->bindParam(':email', $Client, PDO::PARAM_STR);
               $InsertMdp->execute();
 
-              $DeleteSecu=$cnx->prepare("DELETE FROM ".$Prefix."_Admin_secu_mdp WHERE email=:email");
+              $DeleteSecu=$cnx->prepare("DELETE FROM ".DB_PREFIX."Admin_secu_mdp WHERE email=:email");
               $DeleteSecu->bindParam(':email', $Client, PDO::PARAM_STR);
               $DeleteSecu->execute();
 
               $Valid= "Votre mot de passe a bien été validé !<br />";
               $Valid.= "Vous pouvez dès à présent vous connecter !<br />";
-              $Valid.= '<input type=button onClick=(parent.location="'.$Home.'/Admin/") value="Se connecter"><br/>';
+              $Valid.= '<input type=button onClick=(parent.location="'.HOME.'/Admin/") value="Se connecter"><br/>';
         }
         
     }
@@ -74,12 +75,12 @@ if (isset($_POST['Valider'])) {
 if (isset($Valid)) { echo "<p><font color='#009900'>".urldecode($Valid)."</font><BR />"; }   
 
 if ((isset($Client))&&(!empty($Client))) {
-    $RecupHash=$cnx->prepare("SELECT * FROM ".$Prefix."_Admin_secu_mdp WHERE hash=:hash");
+    $RecupHash=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Admin_secu_mdp WHERE hash=:hash");
     $RecupHash->bindParam(':hash', $Hash, PDO::PARAM_STR);
     $RecupHash->execute();
     $NbRowsHash=$RecupHash->rowCount();
 
-    $VerifClient=$cnx->prepare("SELECT (email) FROM ".$Prefix."_Admin_secu_mdp WHERE email=:email");
+    $VerifClient=$cnx->prepare("SELECT (email) FROM ".DB_PREFIX."Admin_secu_mdp WHERE email=:email");
     $VerifClient->bindParam(':email', $Client, PDO::PARAM_STR);
     $VerifClient->execute();
     $NbRowsClient=$VerifClient->rowCount();

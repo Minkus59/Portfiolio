@@ -1,24 +1,20 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
 
 if ($Cnx_Admin===false) {
-  header('location:'.$Home.'/Admin');
+  header('location:'.HOME.'/Admin');
 }
 
-$Erreur=$_GET['erreur'];
-$Valid=$_GET['valid'];
-
-$chemin = $_FILES['photo']['name'];
-$ext = array('.jpeg', '.JPEG', '.jpg', '.JPG', '.png', '.PNG');
-$ext1 = array('.jpeg', '.JPEG', '.jpg', '.JPG');
-$ext2 = array('.png', '.PNG');
-$ext_origin = strchr($chemin, '.');
-$Id=$_GET['id'];
+if (isset($_GET['erreur']) || isset($_GET['valid'])) {
+      $Erreur=$_GET['erreur'];
+      $Valid=$_GET['valid'];
+}
 
 if (isset($_GET['id'])) { 
-    $Select=$cnx->prepare("SELECT * FROM ".$Prefix."_Social WHERE id=:id");
+    $Select=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Social WHERE id=:id");
     $Select->BindParam(":id", $Id, PDO::PARAM_STR);
     $Select->execute();
     $Carousel=$Select->fetch(PDO::FETCH_OBJ);
@@ -26,12 +22,19 @@ if (isset($_GET['id'])) {
 
 if ((isset($_POST['Ajouter']))&&(in_array($ext_origin, $ext))) {
 
+    $chemin = $_FILES['photo']['name'];
+    $ext = array('.jpeg', '.JPEG', '.jpg', '.JPG', '.png', '.PNG');
+    $ext1 = array('.jpeg', '.JPEG', '.jpg', '.JPG');
+    $ext2 = array('.png', '.PNG');
+    $ext_origin = strchr($chemin, '.');
+    $Id=$_GET['id'];
+
     // Upload d'image
     $rep = $_SERVER['DOCUMENT_ROOT']."/lib/Social/";
     $fichier = basename($chemin);
     $taille_origin = filesize($_FILES['photo']['tmp_name']);
     $hash = md5(uniqid(rand(), true));
-    $Chemin_upload = $Home."/lib/Social/".$hash.$fichier."";
+    $Chemin_upload = HOME."/lib/Social/".$hash.$fichier."";
     $TailleImageChoisie = @getimagesize($_FILES['photo']['tmp_name']);
     $taille_max = 10000000;
     $Alt=$_POST['alt'];
@@ -65,13 +68,13 @@ if ((isset($_POST['Ajouter']))&&(in_array($ext_origin, $ext))) {
 
         if (imagejpeg($NouvelleImage_photo , $rep.$hash.$fichier, 100)){
 
-            $InsertPhoto=$cnx->prepare("INSERT INTO ".$Prefix."_Social (logo, lien) VALUES(:logo, :lien");
+            $InsertPhoto=$cnx->prepare("INSERT INTO ".DB_PREFIX."Social (logo, lien) VALUES(:logo, :lien");
             $InsertPhoto->bindParam(':logo', $Chemin_upload, PDO::PARAM_STR);
             $InsertPhoto->bindParam(':lien', $Lien, PDO::PARAM_STR);
             $InsertPhoto->execute();
 
             $Valid="Lien ajouté avec succès !";
-            header("location:".$Home."/Admin/Social/Nouveau/?valid=".urlencode($Valid));
+            header("location:".HOME."/Admin/Social/Nouveau/?valid=".urlencode($Valid));
         }   
         else { $Erreur="Erreur !"; ErreurLog($Erreur); }    
     }
@@ -85,13 +88,13 @@ if ((isset($_POST['Ajouter']))&&(in_array($ext_origin, $ext))) {
 
         if (imagepng($NouvelleImage_photo , $rep.$hash.$fichier, 0)){
 
-            $InsertPhoto=$cnx->prepare("INSERT INTO ".$Prefix."_Social (logo, lien) VALUES(:logo, :lien)");
+            $InsertPhoto=$cnx->prepare("INSERT INTO ".DB_PREFIX."Social (logo, lien) VALUES(:logo, :lien)");
             $InsertPhoto->bindParam(':logo', $Chemin_upload, PDO::PARAM_STR);
             $InsertPhoto->bindParam(':lien', $Lien, PDO::PARAM_STR);
             $InsertPhoto->execute();
 
             $Valid="Lien ajouté avec succès !";
-            header("location:".$Home."/Admin/Social/Nouveau/?valid=".urlencode($Valid));
+            header("location:".HOME."/Admin/Social/Nouveau/?valid=".urlencode($Valid));
         }
     else { $Erreur="Erreur !"; ErreurLog($Erreur); }    
     }
@@ -106,7 +109,7 @@ if ((isset($_POST['Modifier']))&&(isset($_GET['id']))) {
         ErreurLog($Erreur);
     }
     else {
-        $Insert=$cnx->prepare("UPDATE ".$Prefix."_Social SET lien=:lien WHERE id=:id");
+        $Insert=$cnx->prepare("UPDATE ".DB_PREFIX."Social SET lien=:lien WHERE id=:id");
         $Insert->BindParam(":id", $Id, PDO::PARAM_STR);
         $Insert->BindParam(":lien", $Lien, PDO::PARAM_STR); 
         $Insert->execute();
@@ -117,7 +120,7 @@ if ((isset($_POST['Modifier']))&&(isset($_GET['id']))) {
         }
         else  {     
             $Valid="Lien modifier avec succès";
-            header('location:'.$Home.'/Admin/Social/Nouveau/?id='.$Id.'&valid='.urlencode($Valid));
+            header('location:'.HOME.'/Admin/Social/Nouveau/?id='.$Id.'&valid='.urlencode($Valid));
         }
     }
 } 
@@ -132,8 +135,17 @@ if ((isset($_POST['Modifier']))&&(isset($_GET['id']))) {
 <?php require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/menu.inc.php"); ?>
 
 <article class="REEL">
-<?php if (isset($Erreur)) { echo "<p><font color='#FF0000'>".urldecode($Erreur)."</font><BR />"; }
-if (isset($Valid)) { echo "<p><font color='#009900'>".urldecode($Valid)."</font><BR />"; }   ?>
+<?php
+if (isset($Erreur)) { echo '
+<div class="alert alert-danger" role="alert">
+'.$Erreur.'
+</div></p>'; }
+
+if (isset($Valid)) { echo '
+<div class="alert alert-success" role="alert">
+'.$Valid.'
+</div></p>'; }
+?>
 
 <?php if (isset($_GET['id'])) { ?>
       <H1>Modifier le lien</H1> <?php

@@ -1,9 +1,10 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
 if ($Cnx_Admin!=TRUE) {
-  header('location:'.$Home.'/Admin');
+  header('location:'.HOME.'/Admin');
 }
 
 $Erreur=$_GET['erreur'];
@@ -11,15 +12,15 @@ $Id=$_GET['id'];
 
 if ((!empty($_GET['id']))&&(isset($_POST['oui']))) {
 
-    $deleteActu=$cnx->prepare("DELETE FROM ".$Prefix."_mailing_Historique WHERE id=:id");
+    $deleteActu=$cnx->prepare("DELETE FROM ".DB_PREFIX."mailing_Historique WHERE id=:id");
     $deleteActu->bindParam(':id', $Id, PDO::PARAM_INT);
     $deleteActu->execute();
 
-    header('Location:'.$Home.'/Admin/Mailing/Historique/');
+    header('Location:'.HOME.'/Admin/Mailing/Historique/');
 }
 
 if ((!empty($_GET['id']))&&(isset($_POST['non']))) {  
-    header('Location:'.$Home.'/Admin/Mailing/Historique/');
+    header('Location:'.HOME.'/Admin/Mailing/Historique/');
 }
 ?>  
 
