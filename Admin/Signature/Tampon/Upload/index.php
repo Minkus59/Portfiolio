@@ -1,26 +1,17 @@
 <?php
-
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
-
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
 
 if ($Cnx_Admin!=TRUE) {
-  header('location:'.HOME.'/Admin/');
+  header('location:'.$Home.'/Admin/');
 }
 
-if (isset($_GET['erreur']) || isset($_GET['valid'])) {
-      $Erreur=$_GET['erreur'];
-      $Valid=$_GET['valid'];
-}
-
+$Erreur=$_GET['erreur'];
+$Valid=$_GET['valid'];
+$Now=time();
+$ext = array('.jpeg', '.JPEG', '.jpg', '.JPG', '.png', '.PNG');
 $ext1 = array('.jpeg', '.JPEG', '.jpg', '.JPG');
 $ext2 = array('.png', '.PNG');
-
-if(isset($_SESSION['lien'])) {
-    $LienExt=$repExtTampon.$_SESSION['lien'];
-}
 
 //--------- Etape
 $Etape=$_SESSION['Etape'];
@@ -76,7 +67,7 @@ if (isset($_POST['Ajouter'])) {
                     $_SESSION['lien']=$Hash.$ext_origin;
                     $_SESSION['nom']=$_POST['nom'];
                     $delai=0;
-                    header("Refresh:".$delai.";url=".HOME."/Admin/Signature/Tampon/Upload/");
+                    header("Refresh:".$delai.";url=".$Home."/Admin/Signature/Tampon/Upload/");
                 }
             } 
         }
@@ -100,7 +91,7 @@ if (isset($_POST['Ajouter'])) {
                     $_SESSION['lien']=$Hash.$ext_origin;
                     $_SESSION['nom']=$_POST['nom'];
                     $delai=0;
-                    header("Refresh:".$delai.";url=".HOME."/Admin/Signature/Tampon/Upload/");
+                    header("Refresh:".$delai.";url=".$Home."/Admin/Signature/Tampon/Upload/");
                 }
             } 
         }
@@ -110,7 +101,7 @@ if (isset($_POST['Ajouter'])) {
 //--------- Ajouter une photo
 //--------- Validation, Insertion
 if (isset($_POST['Valider'])) {
-        $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."Signature_Tampon (lien, nom) VALUES(:lien, :nom)");
+        $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_Signature_Tampon (lien, nom) VALUES(:lien, :nom)");
         $Insert->BindParam(":lien", $_SESSION['lien'], PDO::PARAM_STR);
         $Insert->BindParam(":nom", $_SESSION['nom'], PDO::PARAM_STR);
         $Insert->execute();
@@ -124,7 +115,7 @@ if (isset($_POST['Valider'])) {
             unset($_SESSION['nom']);
 
             $Valid="Article ajouter avec succés";
-            header("location:".HOME."/Admin/Signature/Tampon/?valid=".urlencode($Valid));
+            header("location:".$Home."/Admin/Signature/Tampon/?valid=".urlencode($Valid));
         }  
 }
 
@@ -136,7 +127,7 @@ if (isset($_POST['Annuler'])) {
     unset($_SESSION['lien']);
     unset($_SESSION['nom']);
   
-    header('location:'.HOME.'/Admin/Signature/Tampon');
+    header('location:'.$Home.'/Admin/Signature/Tampon');
 }
 
 if (isset($_POST['Rotation'])) {
@@ -173,9 +164,10 @@ if (isset($_POST['Rotation'])) {
     imagedestroy($rotate);
   
     $delai=0;
-    header("Refresh:".$delai.";url=".HOME."/Admin/Signature/Tampon/Upload/");
+    header("Refresh:".$delai.";url=".$Home."/Admin/Signature/Tampon/Upload/");
 }
 
+$LienExt=$repExtTampon.$_SESSION['lien'];
 ?>
 <?php require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/head.inc.php"); ?>
 
@@ -184,17 +176,8 @@ if (isset($_POST['Rotation'])) {
 <?php require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/menu.inc.php"); ?>
 
 <article>
-        <?php
-        if (isset($Erreur)) { echo '
-            <div class="alert alert-danger" role="alert">
-            '.$Erreur.'
-        </div></p>'; }
-
-        if (isset($Valid)) { echo '
-            <div class="alert alert-success" role="alert">
-            '.$Valid.'
-            </div></p>'; }
-        ?>
+<?php if (isset($Erreur)) { echo "<font color='#FF0000'>".$Erreur."</font><BR />"; }
+if (isset($Valid)) { echo "<font color='#009900'>".$Valid."</font><BR />"; } ?>
 
 
 <?php if ($Etape1==false) { ?>

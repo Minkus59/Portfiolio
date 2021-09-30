@@ -1,17 +1,14 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
 
 if ($Cnx_Admin===false) {
-  header('location:'.HOME.'/Admin');
+  header('location:'.$Home.'/Admin');
 }
 
-if (isset($_GET['erreur']) || $_GET['valid']) {
-    $Erreur=$_GET['erreur'];
-    $Valid=$_GET['valid']; 
-}
+$Erreur=$_GET['erreur'];
+$Valid=$_GET['valid']; 
 
 if (isset($_POST['Rechercher'])) {
     $RechercheBoule_1=$_POST['boule_1'];
@@ -21,7 +18,7 @@ if (isset($_POST['Rechercher'])) {
     $RechercheBoule_5=$_POST['boule_5'];
     $RechercheBoule_6=$_POST['boule_6'];
 
-    $RecupRechercheGagnant=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE boule_1=:boule_1 AND boule_2=:boule_2 AND boule_3=:boule_3 AND boule_4=:boule_4 AND boule_5=:boule_5 AND numero_chance=:numero_chance");
+    $RecupRechercheGagnant=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE boule_1=:boule_1 AND boule_2=:boule_2 AND boule_3=:boule_3 AND boule_4=:boule_4 AND boule_5=:boule_5 AND numero_chance=:numero_chance");
     $RecupRechercheGagnant->bindParam(':boule_1', $RechercheBoule_1, PDO::PARAM_STR);
     $RecupRechercheGagnant->bindParam(':boule_2', $RechercheBoule_2, PDO::PARAM_STR);
     $RecupRechercheGagnant->bindParam(':boule_3', $RechercheBoule_3, PDO::PARAM_STR);
@@ -41,7 +38,7 @@ if (isset($_POST['Ajouter'])) {
         }
         else {
             //On supprime toutes les email de la liste pour ajouter la nouvelle selection
-            $delete=$cnx->prepare("DELETE FROM ".DB_PREFIX."loto");
+            $delete=$cnx->prepare("DELETE FROM ".$Prefix."loto");
             $delete->execute();
 
             //Process the CSV file
@@ -54,7 +51,7 @@ if (isset($_POST['Ajouter'])) {
                 $Boule_5 = $data[8];
                 $Numero_chance = $data[9];
 
-                $Ajout=$cnx->prepare("INSERT INTO ".DB_PREFIX."loto (boule_1, boule_2, boule_3, boule_4, boule_5, numero_chance) VALUES(:boule_1, :boule_2, :boule_3, :boule_4, :boule_5, :numero_chance)");
+                $Ajout=$cnx->prepare("INSERT INTO ".$Prefix."loto (boule_1, boule_2, boule_3, boule_4, boule_5, numero_chance) VALUES(:boule_1, :boule_2, :boule_3, :boule_4, :boule_5, :numero_chance)");
                 $Ajout->bindParam(':boule_1', $Boule_1, PDO::PARAM_STR);
                 $Ajout->bindParam(':boule_2', $Boule_2, PDO::PARAM_STR);
                 $Ajout->bindParam(':boule_3', $Boule_3, PDO::PARAM_STR);
@@ -65,7 +62,7 @@ if (isset($_POST['Ajouter'])) {
             }
     
             $Valid="Numéro ajoutée avec succès";
-            header('Location:'.HOME.'/Admin//loto/?valid='.urlencode($Valid));
+            header('Location:'.$Home.'/Admin//loto/?valid='.urlencode($Valid));
         }
     }
 ?>
@@ -141,32 +138,32 @@ else {
 <?php
 $NombreMaxBoule_1=array();
 for($Boule=1;$Boule<=49;$Boule++) {
-    $RecupNumero1=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE boule_1=:boule");
+    $RecupNumero1=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE boule_1=:boule");
     $RecupNumero1->bindParam(':boule', $Boule, PDO::PARAM_STR);
     $RecupNumero1->execute();
     $PlusUtil1=$RecupNumero1->rowCount();
 
-    $RecupNumero2=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE boule_2=:boule");
+    $RecupNumero2=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE boule_2=:boule");
     $RecupNumero2->bindParam(':boule', $Boule, PDO::PARAM_STR);
     $RecupNumero2->execute();
     $PlusUtil2=$RecupNumero2->rowCount();
 
-    $RecupNumero3=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE boule_3=:boule");
+    $RecupNumero3=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE boule_3=:boule");
     $RecupNumero3->bindParam(':boule', $Boule, PDO::PARAM_STR);
     $RecupNumero3->execute();
     $PlusUtil3=$RecupNumero3->rowCount();
     
-    $RecupNumero4=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE boule_4=:boule");
+    $RecupNumero4=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE boule_4=:boule");
     $RecupNumero4->bindParam(':boule', $Boule, PDO::PARAM_STR);
     $RecupNumero4->execute();
     $PlusUtil4=$RecupNumero4->rowCount();
     
-    $RecupNumero5=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE boule_5=:boule");
+    $RecupNumero5=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE boule_5=:boule");
     $RecupNumero5->bindParam(':boule', $Boule, PDO::PARAM_STR);
     $RecupNumero5->execute();
     $PlusUtil5=$RecupNumero5->rowCount();
 
-    $RecupNumero6=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE numero_chance=:boule");
+    $RecupNumero6=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE numero_chance=:boule");
     $RecupNumero6->bindParam(':boule', $Boule, PDO::PARAM_STR);
     $RecupNumero6->execute();
     $PlusUtil6=$RecupNumero6->rowCount();
@@ -196,7 +193,7 @@ $MaxBoule_5=max($NombreMaxBoule_5);
 $MaxBoule_6=max($NombreMaxBoule_6);
 
 for($Boule=1;$Boule<=49;$Boule++) {
-    $RecupNumero1=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE boule_1=:boule");
+    $RecupNumero1=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE boule_1=:boule");
     $RecupNumero1->bindParam(':boule', $Boule, PDO::PARAM_STR);
     $RecupNumero1->execute();
     $PlusUtil1=$RecupNumero1->rowCount();
@@ -205,7 +202,7 @@ for($Boule=1;$Boule<=49;$Boule++) {
         $NumBoule_1=$Boule;
     }
 
-    $RecupNumero2=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE boule_2=:boule");
+    $RecupNumero2=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE boule_2=:boule");
     $RecupNumero2->bindParam(':boule', $Boule, PDO::PARAM_STR);
     $RecupNumero2->execute();
     $PlusUtil2=$RecupNumero2->rowCount();
@@ -214,7 +211,7 @@ for($Boule=1;$Boule<=49;$Boule++) {
         $NumBoule_2=$Boule;
     }
 
-    $RecupNumero3=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE boule_3=:boule");
+    $RecupNumero3=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE boule_3=:boule");
     $RecupNumero3->bindParam(':boule', $Boule, PDO::PARAM_STR);
     $RecupNumero3->execute();
     $PlusUtil3=$RecupNumero3->rowCount();
@@ -223,7 +220,7 @@ for($Boule=1;$Boule<=49;$Boule++) {
         $NumBoule_3=$Boule;
     }
     
-    $RecupNumero4=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE boule_4=:boule");
+    $RecupNumero4=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE boule_4=:boule");
     $RecupNumero4->bindParam(':boule', $Boule, PDO::PARAM_STR);
     $RecupNumero4->execute();
     $PlusUtil4=$RecupNumero4->rowCount();
@@ -232,7 +229,7 @@ for($Boule=1;$Boule<=49;$Boule++) {
         $NumBoule_4=$Boule;
     }
     
-    $RecupNumero5=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE boule_5=:boule");
+    $RecupNumero5=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE boule_5=:boule");
     $RecupNumero5->bindParam(':boule', $Boule, PDO::PARAM_STR);
     $RecupNumero5->execute();
     $PlusUtil5=$RecupNumero5->rowCount();
@@ -241,7 +238,7 @@ for($Boule=1;$Boule<=49;$Boule++) {
         $NumBoule_5=$Boule;
     }
 
-    $RecupNumero6=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE numero_chance=:boule");
+    $RecupNumero6=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE numero_chance=:boule");
     $RecupNumero6->bindParam(':boule', $Boule, PDO::PARAM_STR);
     $RecupNumero6->execute();
     $PlusUtil6=$RecupNumero6->rowCount();
@@ -251,7 +248,7 @@ for($Boule=1;$Boule<=49;$Boule++) {
     }
 }
 
-$RecupNumeroGagnant=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE boule_1=:boule_1 AND boule_2=:boule_2 AND boule_3=:boule_3 AND boule_4=:boule_4 AND boule_5=:boule_5 AND numero_chance=:numero_chance");
+$RecupNumeroGagnant=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE boule_1=:boule_1 AND boule_2=:boule_2 AND boule_3=:boule_3 AND boule_4=:boule_4 AND boule_5=:boule_5 AND numero_chance=:numero_chance");
 $RecupNumeroGagnant->bindParam(':boule_1', $NumBoule_1, PDO::PARAM_STR);
 $RecupNumeroGagnant->bindParam(':boule_2', $NumBoule_2, PDO::PARAM_STR);
 $RecupNumeroGagnant->bindParam(':boule_3', $NumBoule_3, PDO::PARAM_STR);
@@ -308,12 +305,12 @@ else {
 
 <table>
 <?php
-$recupTotal=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto");
+$recupTotal=$cnx->prepare("SELECT * FROM ".$Prefix."loto");
 $recupTotal->bindParam(':boule', $Boule, PDO::PARAM_STR);
 $recupTotal->execute();
 
 while($Total=$recupTotal->fetch(PDO::FETCH_OBJ)) {
-    $RecupTotalGagnant=$cnx->prepare("SELECT * FROM ".DB_PREFIX."loto WHERE boule_1=:boule_1 AND boule_2=:boule_2 AND boule_3=:boule_3 AND boule_4=:boule_4 AND boule_5=:boule_5 AND numero_chance=:numero_chance");
+    $RecupTotalGagnant=$cnx->prepare("SELECT * FROM ".$Prefix."loto WHERE boule_1=:boule_1 AND boule_2=:boule_2 AND boule_3=:boule_3 AND boule_4=:boule_4 AND boule_5=:boule_5 AND numero_chance=:numero_chance");
     $RecupTotalGagnant->bindParam(':boule_1', $Total->boule_1, PDO::PARAM_STR);
     $RecupTotalGagnant->bindParam(':boule_2', $Total->boule_2, PDO::PARAM_STR);
     $RecupTotalGagnant->bindParam(':boule_3', $Total->boule_3, PDO::PARAM_STR);

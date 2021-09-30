@@ -1,17 +1,13 @@
 <?php
-
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
-
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
 
 if ($Cnx_Admin!=TRUE) {
-  header('location:'.HOME.'/Admin/');
+  header('location:'.$Home.'/Admin/');
 }
 
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/lib/FPDF/fpdf.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/lib/FPDI-1.6.1/fpdi.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/FPDF/fpdf.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/FPDI-1.6.1/fpdi.php");
 
 $Count=count($_FILES['fichier']['name']);
 
@@ -25,14 +21,14 @@ for($i=0;$i<$Count;$i++) {
     $Fichier=$_SESSION['hash']."-".$fichier;
     $NomFichier=preg_replace(array('/.pdf/', '/.PDF/'), "", $Fichier);
 
-    $VerifExist=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Signature_Original WHERE fichier=:fichier");
+    $VerifExist=$cnx->prepare("SELECT * FROM ".$Prefix."_Signature_Original WHERE fichier=:fichier");
     $VerifExist->bindParam(':fichier', $Fichier, PDO::PARAM_STR);
     $VerifExist->execute();
     $NbRows=$VerifExist->rowCount();
             
     if ($NbRows==1) {
         $Erreur= "Ce fichier existe déjà !<br />";
-        header('location:'.HOME.'/Admin/Signature/?erreur='.urlencode($Erreur));
+        header('location:'.$Home.'/Admin/Signature/?erreur='.urlencode($Erreur));
     }
     else {
         $ext = array('.pdf', '.PDF');
@@ -47,21 +43,21 @@ for($i=0;$i<$Count;$i++) {
 
             if (!in_array($ext_origin, $ext)) {
                 $Erreur= "Extention de fichier non pris en charge !<BR />";
-                header('location:'.HOME.'/Admin/Signature/?erreur='.urlencode($Erreur));
+                header('location:'.$Home.'/Admin/Signature/?erreur='.urlencode($Erreur));
             }
             else {
                 //PDF
                 if (in_array($ext_origin, $ext2)) {
                     if($taille_origin>$taille_max) {
                         $Erreur= "fichier trop volumineux, il ne doit dépassé les 20Mo<BR />";
-                        header('location:'.HOME.'/Admin/Signature/?erreur='.urlencode($Erreur));
+                        header('location:'.$Home.'/Admin/Signature/?erreur='.urlencode($Erreur));
                     }
 
                     if (!isset($Erreur)) {
                         $Upload = move_uploaded_file($_FILES['fichier']['tmp_name'][$i], $repIntOriginal.$Fichier);
                         if ($Upload==false) {
                             $Erreur= "Erreur de téléchargement, veuillez réassayer ultérueurement<BR />";
-                            header('location:'.HOME.'/Admin/Signature/?erreur='.urlencode($Erreur));
+                            header('location:'.$Home.'/Admin/Signature/?erreur='.urlencode($Erreur));
                         }
                         else {
                             $NoPage=0;
@@ -92,7 +88,7 @@ for($i=0;$i<$Count;$i++) {
                                 }
                                 $FichierJpg2=$NomFichier.".jpg";
 
-                                $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."Signature_Original_Jpg (fichier, page, created, hash) VALUES (:fichier, :page, :created, :hash)");
+                                $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_Signature_Original_Jpg (fichier, page, created, hash) VALUES (:fichier, :page, :created, :hash)");
                                 $Insert->BindParam(":fichier", $FichierJpg, PDO::PARAM_STR);
                                 $Insert->BindParam(":page", $pageNo, PDO::PARAM_STR);
                                 $Insert->BindParam(":created", $Now, PDO::PARAM_STR);
@@ -104,19 +100,14 @@ for($i=0;$i<$Count;$i++) {
 
                             $pdf_file = $repIntOriginal.$Fichier;
                             $save_to = $repIntJpgOriginal.$FichierJpg2;
-                            $convert = exec('convert "'.$pdf_file.'" -colorspace RGB -resize 800 "'.$save_to.'"', $output, $return_var);
-
-                            if(!$convert) {
-                                $Erreur= "Erreur de convertion en images, veuillez réassayer !<BR />";
-                                header('location:'.HOME.'/Admin/Signature/?erreur='.urlencode($Erreur));
-                            }
+                            exec('convert "'.$pdf_file.'" -colorspace RGB -resize 800 "'.$save_to.'"', $output, $return_var);
                             
                             if($return_var != 0) {
                                 $Erreur= "Erreur de chargement des images, veuillez réassayer !<BR />";
-                                header('location:'.HOME.'/Admin/Signature/?erreur='.urlencode($Erreur));
+                                header('location:'.$Home.'/Admin/Signature/?erreur='.urlencode($Erreur));
                             }
                             
-                            $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."Signature_Original (fichier, created, hash) VALUES (:fichier, :created, :hash)");
+                            $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_Signature_Original (fichier, created, hash) VALUES (:fichier, :created, :hash)");
                             $Insert->BindParam(":fichier", $Fichier, PDO::PARAM_STR);
                             $Insert->BindParam(":created", $Now, PDO::PARAM_STR);
                             $Insert->BindParam(":hash", $_SESSION['hash'], PDO::PARAM_STR);
@@ -132,5 +123,5 @@ for($i=0;$i<$Count;$i++) {
     }
 }
 
-header('location:'.HOME.'/Admin/Signature/?valid='.urlencode($Valid));
+header('location:'.$Home.'/Admin/Signature/?valid='.urlencode($Valid));
 ?>

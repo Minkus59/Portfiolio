@@ -1,27 +1,24 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
 
 if ($Cnx_Admin!=TRUE) {
-  header('location:'.HOME.'/Admin');
+  header('location:'.$Home.'/Admin');
 }
 
-if (isset($_GET['erreur']) || isset($_GET['valid'])) {
-      $Erreur=$_GET['erreur'];
-      $Valid=$_GET['valid'];
-}
+$Erreur=$_GET['erreur'];
+$Valid=$_GET['valid'];
 $Id=$_GET['id'];
 
 if (isset($_GET['id'])) { 
-  $ParamSignature=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Signature WHERE id=:id");  
+  $ParamSignature=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Signature WHERE id=:id");  
   $ParamSignature->BindParam(":id", $Id, PDO::PARAM_STR); 
   $ParamSignature->execute(); 
   $SignatureParam=$ParamSignature->fetch(PDO::FETCH_OBJ);
 }
 
-$SignatureListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Signature");    
+$SignatureListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Signature");    
 $SignatureListe->execute(); 
 
 
@@ -37,7 +34,7 @@ if ((isset($_POST['Modifier']))&&(isset($_GET['id']))) {
         $Erreur="Un libélé doit etre saisie afin de retrouver votre mail !";
     }
     else {
-      $Insert=$cnx->prepare("UPDATE ".DB_PREFIX."mailing_Signature SET signature=:signature, libelle=:libelle WHERE id=:id");
+      $Insert=$cnx->prepare("UPDATE ".$Prefix."_mailing_Signature SET signature=:signature, libelle=:libelle WHERE id=:id");
       $Insert->BindParam(":id", $Id, PDO::PARAM_STR);
       $Insert->BindParam(":libelle", $_SESSION['libele'], PDO::PARAM_STR);
       $Insert->BindParam(":signature", $_SESSION['signature'], PDO::PARAM_STR);
@@ -50,7 +47,7 @@ if ((isset($_POST['Modifier']))&&(isset($_GET['id']))) {
           unset($_SESSION['signature']); 
           unset($_SESSION['libele']); 
           $Valid="signature modifier avec succès";
-          header("location:".HOME."/Admin/Mailing/Signature/?valid=".urlencode($Valid));
+          header("location:".$Home."/Admin/Mailing/Signature/?valid=".urlencode($Valid));
       }
   } 
 }
@@ -66,7 +63,7 @@ if ((isset($_POST['Enregistrer4']))&&(!isset($_GET['id']))) {
         $Erreur="Un libélé doit etre saisie afin de retrouver votre mail !";
     }
     else {
-        $InsertParam=$cnx->prepare("INSERT INTO ".DB_PREFIX."mailing_Signature (libelle, signature) VALUES(:libelle, :signature)");
+        $InsertParam=$cnx->prepare("INSERT INTO ".$Prefix."_mailing_Signature (libelle, signature) VALUES(:libelle, :signature)");
         $InsertParam->bindParam(':libelle', $_SESSION['libele'], PDO::PARAM_STR);
         $InsertParam->bindParam(':signature', $_SESSION['signature'], PDO::PARAM_STR);
         $InsertParam->execute();
@@ -74,7 +71,7 @@ if ((isset($_POST['Enregistrer4']))&&(!isset($_GET['id']))) {
         unset($_SESSION['signature']); 
         unset($_SESSION['libele']);   
         $Valid="Signature ajouter avec succès";
-        header("location:".HOME."/Admin/Mailing/Signature/?valid=".urlencode($Valid));
+        header("location:".$Home."/Admin/Mailing/Signature/?valid=".urlencode($Valid));
     }
 }
     
@@ -128,8 +125,8 @@ while ($Signature=$SignatureListe->fetch(PDO::FETCH_OBJ)) {
    <td><?php echo $Signature->signature; ?></td>
    <td>
    <?php 
-   echo '<a href="'.HOME.'/Admin/Mailing/Signature/?id='.$Signature->id.'"><img src="'.HOME.'/Admin/lib/img/modifier.png"></a>';
-   echo '<a title="Supprimer" href="'.HOME.'/Admin/Mailing/Signature/supprimer.php?id='.$Signature->id.'"><img src="'.HOME.'/Admin/lib/img/supprimer.png"></a></td></tr>';
+   echo '<a href="'.$Home.'/Admin/Mailing/Signature/?id='.$Signature->id.'"><img src="'.$Home.'/Admin/lib/img/modifier.png"></a>';
+   echo '<a title="Supprimer" href="'.$Home.'/Admin/Mailing/Signature/supprimer.php?id='.$Signature->id.'"><img src="'.$Home.'/Admin/lib/img/supprimer.png"></a></td></tr>';
 }
 ?>
 </table>

@@ -1,20 +1,17 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
 
 if ($Cnx_Admin!=TRUE) {
-  header('location:'.HOME.'/Admin');
+  header('location:'.$Home.'/Admin');
 }
 
-if (isset($_GET['erreur']) || isset($_GET['valid'])) {
-      $Erreur=$_GET['erreur'];
-      $Valid=$_GET['valid'];
-}
+$Erreur=$_GET['erreur'];
+$Valid=$_GET['valid'];
 $Id=$_GET['id'];
 
-$SelectContact=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste WHERE id=:id");
+$SelectContact=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste WHERE id=:id");
 $SelectContact->bindParam(':id', $Id, PDO::PARAM_STR);
 $SelectContact->execute();
 $Contact=$SelectContact->fetch(PDO::FETCH_OBJ);
@@ -32,7 +29,7 @@ if (isset($_POST['Modifier'])) {
         ErreurLog($Erreur);
     }
     else {
-        $Update=$cnx->prepare("UPDATE ".DB_PREFIX."mailing_Liste SET categorie=:categorie, alumni=:alumni, statut=:statut, nom=:nom, prenom=:prenom, email=:email WHERE id=:id");
+        $Update=$cnx->prepare("UPDATE ".$Prefix."_mailing_Liste SET categorie=:categorie, alumni=:alumni, statut=:statut, nom=:nom, prenom=:prenom, email=:email WHERE id=:id");
         $Update->bindParam(':id', $Id, PDO::PARAM_STR);
         $Update->bindParam(':categorie', $Categorie, PDO::PARAM_STR);
         $Update->bindParam(':alumni', $Alumni, PDO::PARAM_STR);
@@ -43,7 +40,7 @@ if (isset($_POST['Modifier'])) {
         $Update->execute();
 
         $Valid="Contact modifié avec succès";
-        header('Location:'.HOME.'/Admin/Mailing/Liste/?valid='.urlencode($Valid));
+        header('Location:'.$Home.'/Admin/Mailing/Liste/?valid='.urlencode($Valid));
     }
 }
 

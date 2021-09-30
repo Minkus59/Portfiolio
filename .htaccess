@@ -1,11 +1,11 @@
 SetEnv PHP_VER 7
 SetEnv REGISTER_GLOBALS 0
 
-# RewriteEngine On
-# RewriteCond %{HTTPS} off
-# RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-# RewriteCond %{HTTP_HOST} !^www\.
-# RewriteRule .* https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+RewriteCond %{HTTP_HOST} !^www\.
+RewriteRule .* https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 DirectoryIndex index.php index.html /erreur_401.php
 ErrorDocument 404 /erreur_404.php
@@ -63,7 +63,7 @@ RewriteCond %{QUERY_STRING} ^(.*)(%3D|=)http(%3A|:)(/|%2F){2}(.*)$ [NC,OR]
 RewriteCond %{QUERY_STRING} ^(.*)base64_encode(.*)$ [OR]
 RewriteCond %{QUERY_STRING} ^(.*)GLOBALS(=|[|%[0-9A-Z]{0,2})(.*)$ [OR]
 RewriteCond %{QUERY_STRING} ^(.*)_REQUEST(=|[|%[0-9A-Z]{0,2})(.*)$ [OR]
-RewriteCond %{QUERY_STRING} ^(.*)(SELECT(%20|\+)|UNION(%20|\+)ALL|INSERT(%20|\+)|DELETE(%20|\+)|CHAR\(|UPDATE(%20|\+)|$_SERVER['DOCUMENT_ROOT']LACE(%20|\+)|LIMIT(%20|\+))(.*)$ [NC]
+RewriteCond %{QUERY_STRING} ^(.*)(SELECT(%20|\+)|UNION(%20|\+)ALL|INSERT(%20|\+)|DELETE(%20|\+)|CHAR\(|UPDATE(%20|\+)|REPLACE(%20|\+)|LIMIT(%20|\+))(.*)$ [NC]
 RewriteRule (.*) - [F]
 
 ### Protection du fichier
@@ -71,7 +71,3 @@ RewriteRule (.*) - [F]
 order allow,deny
 deny from all
 </files>
-
-<IfModule mod_headers.c>
-Header always set X-Content-Type-Options "nosniff"
-</IfModule>

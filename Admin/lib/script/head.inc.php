@@ -14,11 +14,11 @@
 <meta name="publisher" content="Helinckx Michael">
 <meta name="viewport" content="width=device-width" >                                                            
 
-<link rel="shortcut icon" href="<?php echo HOME ?>/Admin/lib/img/icone.ico">
+<link rel="shortcut icon" href="<?php echo $Home; ?>/Admin/lib/img/icone.ico">
 
-<link rel="stylesheet" type="text/css" href="<?php echo HOME ?>/Admin/lib/css/responsive.css" >
+<link rel="stylesheet" type="text/css" href="<?php echo $Home; ?>/Admin/lib/css/responsive.css" >
 
-<script type="text/javascript" src="<?php echo HOME ?>/Admin/lib/js/tinymce/tinymce.min.js"></script>
+<script type="text/javascript" src="<?php echo $Home; ?>/Admin/lib/js/tinymce/tinymce.min.js"></script>
 <script type="text/javascript">
   tinymce.init({
     extended_valid_elements : "script[type|src],input[onclick|title|type]",

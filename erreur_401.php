@@ -1,11 +1,22 @@
 <?php 
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/impinfbdd/config.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/head.inc.php"); ?>
 
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/views/head.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/views/header.inc.php"); 
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/views/nav.inc.php"); 
+<body>
 
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/views/erreur/erreur401.inc.php"); 
+<CENTER>
+<div class="Center">
+<article>
+<H1>ERREUR 401</H1></p>
 
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/views//footer.inc.php"); 
-?>
+<a href='<?php echo $Home; ?>'>Veuillez revenir a la page d'accueil !</a>
+
+</article>
+</div>
+
+</CENTER>
+</body>
+
+</html>

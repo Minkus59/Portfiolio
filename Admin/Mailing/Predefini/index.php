@@ -1,27 +1,24 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
 
 if ($Cnx_Admin!=TRUE) {
-  header('location:'.HOME.'/Admin');
+  header('location:'.$Home.'/Admin');
 }
 
-if (isset($_GET['erreur']) || isset($_GET['valid'])) {
-      $Erreur=$_GET['erreur'];
-      $Valid=$_GET['valid'];
-}
+$Erreur=$_GET['erreur'];
+$Valid=$_GET['valid'];
 $Id=$_GET['id'];
 
 if (isset($_GET['id'])) { 
-  $Parammailing=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Predefini WHERE id=:id");  
+  $Parammailing=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Predefini WHERE id=:id");  
   $Parammailing->BindParam(":id", $Id, PDO::PARAM_STR); 
   $Parammailing->execute(); 
   $Param=$Parammailing->fetch(PDO::FETCH_OBJ);
 }
 
-$ParammailingListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Predefini");    
+$ParammailingListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Predefini");    
 $ParammailingListe->execute(); 
 
 
@@ -37,7 +34,7 @@ if ((isset($_POST['Modifier']))&&(isset($_GET['id']))) {
         $Erreur="Un libélé doit etre saisie afin de retrouver votre mail !";
     }
     else {
-      $Insert=$cnx->prepare("UPDATE ".DB_PREFIX."mailing_Predefini SET mailing=:mailing, libele=:libele WHERE id=:id");
+      $Insert=$cnx->prepare("UPDATE ".$Prefix."_mailing_Predefini SET mailing=:mailing, libele=:libele WHERE id=:id");
       $Insert->BindParam(":id", $Id, PDO::PARAM_STR);
       $Insert->BindParam(":libele", $_SESSION['libele'], PDO::PARAM_STR);
       $Insert->BindParam(":mailing", $_SESSION['mailing'], PDO::PARAM_STR);
@@ -50,7 +47,7 @@ if ((isset($_POST['Modifier']))&&(isset($_GET['id']))) {
           unset($_SESSION['mailing']); 
           unset($_SESSION['libele']); 
           $Valid="mailing modifier avec succès";
-          header("location:".HOME."/Admin/Mailing/Predefini/?valid=".urlencode($Valid));
+          header("location:".$Home."/Admin/Mailing/Predefini/?valid=".urlencode($Valid));
       }
   } 
 }
@@ -66,7 +63,7 @@ if ((isset($_POST['Enregistrer4']))&&(!isset($_GET['id']))) {
         $Erreur="Un libélé doit etre saisie afin de retrouver votre mail !";
     }
     else {
-        $InsertParam=$cnx->prepare("INSERT INTO ".DB_PREFIX."mailing_Predefini (libele, mailing) VALUES(:libele, :mailing)");
+        $InsertParam=$cnx->prepare("INSERT INTO ".$Prefix."_mailing_Predefini (libele, mailing) VALUES(:libele, :mailing)");
         $InsertParam->bindParam(':libele', $_SESSION['libele'], PDO::PARAM_STR);
         $InsertParam->bindParam(':mailing', $_SESSION['mailing'], PDO::PARAM_STR);
         $InsertParam->execute();
@@ -74,7 +71,7 @@ if ((isset($_POST['Enregistrer4']))&&(!isset($_GET['id']))) {
         unset($_SESSION['mailing']); 
         unset($_SESSION['libele']);   
         $Valid="mailing ajouter avec succès";
-        header("location:".HOME."/Admin/Mailing/Predefini/?valid=".urlencode($Valid));
+        header("location:".$Home."/Admin/Mailing/Predefini/?valid=".urlencode($Valid));
     }
 }
     
@@ -130,8 +127,8 @@ while ($Liste=$ParammailingListe->fetch(PDO::FETCH_OBJ)) {
    <td><?php echo $Liste->mailing; ?></td>
    <td>
    <?php 
-   echo '<a href="'.HOME.'/Admin/Mailing/Predefini/?id='.$Liste->id.'"><img src="'.HOME.'/Admin/lib/img/modifier.png"></a>';
-   echo '<a title="Supprimer" href="'.HOME.'/Admin/Mailing/Predefini/supprimer.php?id='.$Liste->id.'"><img src="'.HOME.'/Admin/lib/img/supprimer.png"></a></td></tr>';
+   echo '<a href="'.$Home.'/Admin/Mailing/Predefini/?id='.$Liste->id.'"><img src="'.$Home.'/Admin/lib/img/modifier.png"></a>';
+   echo '<a title="Supprimer" href="'.$Home.'/Admin/Mailing/Predefini/supprimer.php?id='.$Liste->id.'"><img src="'.$Home.'/Admin/lib/img/supprimer.png"></a></td></tr>';
 }
 ?>
 </table>

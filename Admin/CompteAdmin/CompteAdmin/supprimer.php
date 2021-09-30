@@ -1,37 +1,37 @@
 <?php 
- 
-require_once($_SERVER['DOCUMENT_ROOT']."/models/log.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php"); 
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/log.inc.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php"); 
 
 if ($Cnx_Admin===false) {
-  header('location:'.HOME.'/Admin');
+  header('location:'.$Home.'/Admin');
 }
 
 $Erreur=$_GET['erreur'];
 $Id=$_GET['id'];
 
 if ((!empty($_GET['id']))&&(isset($_POST['oui']))) {
-    $Select=$cnx->prepare("SELECT * FROM ".DB_PREFIX."compte_Admin WHERE id=:id");
+    $Select=$cnx->prepare("SELECT * FROM ".$Prefix."_compte_Admin WHERE id=:id");
     $Select->bindParam(':id', $Id, PDO::PARAM_INT);
     $Select->execute();
     $Info=$Select->fetch(PDO::FETCH_OBJ);
 
     if($Info->admin!=1) {
-        $deleteActu=$cnx->prepare("DELETE FROM ".DB_PREFIX."compte_Admin WHERE id=:id");
+        $deleteActu=$cnx->prepare("DELETE FROM ".$Prefix."_compte_Admin WHERE id=:id");
         $deleteActu->bindParam(':id', $Id, PDO::PARAM_INT);
         $deleteActu->execute();
         
-        header('Location:'.HOME.'/Admin/CompteAdmin/');
+        header('Location:'.$Home.'/Admin/CompteAdmin/');
     }
     else {
         $Erreur="Impossible de supprimer un compte administrateur !";
         ErreurLog($Erreur);
-        header('Location:'.HOME.'/Admin/CompteAdmin/?erreur='.urlencode($Erreur));
+        header('Location:'.$Home.'/Admin/CompteAdmin/?erreur='.urlencode($Erreur));
     }
 }
 
 if ((!empty($_GET['id']))&&(isset($_POST['non']))) {  
-    header('Location:'.HOME.'/Admin/CompteAdmin/');
+    header('Location:'.$Home.'/Admin/CompteAdmin/');
 }
 ?>  
 
@@ -56,18 +56,18 @@ if ((!empty($_GET['id']))&&(isset($_POST['non']))) {
 <META name="viewport" content="width=device-width" >                                                            
 
 
-<link rel="shortcut icon" href="<?php echo HOME ?>/Admin/lib/img/icone.ico">
+<link rel="shortcut icon" href="<?php echo $Home; ?>/Admin/lib/img/icone.ico">
 
-<link rel="stylesheet" type="text/css" media="screen AND (max-width: 480px)" href="<?php echo HOME ?>/lib/css/misenpatel.css" />
-<link rel="stylesheet" type="text/css" media="screen AND (min-width: 480px) AND (max-width: 960px)" href="<?php echo HOME ?>/lib/css/misenpatab.css" />
-<link rel="stylesheet" type="text/css" media="screen AND (min-width: 960px)" href="<?php echo HOME ?>/lib/css/misenpapc.css" >
+<link rel="stylesheet" type="text/css" media="screen AND (max-width: 480px)" href="<?php echo $Home; ?>/lib/css/misenpatel.css" />
+<link rel="stylesheet" type="text/css" media="screen AND (min-width: 480px) AND (max-width: 960px)" href="<?php echo $Home; ?>/lib/css/misenpatab.css" />
+<link rel="stylesheet" type="text/css" media="screen AND (min-width: 960px)" href="<?php echo $Home; ?>/lib/css/misenpapc.css" >
 </head>
 
 <body>
 <CENTER>
 <header>
 <div id="int">
-<?php require($_SERVER['DOCUMENT_ROOT']."/models/head.inc.php"); ?>
+<?php require($_SERVER['DOCUMENT_ROOT']."/lib/script/head.inc.php"); ?>
 </div>
 </header>
 <div id="MenuAdmin">
@@ -77,17 +77,8 @@ if ((!empty($_GET['id']))&&(isset($_POST['non']))) {
 <div id="Center">
 
 <article>
-        <?php
-        if (isset($Erreur)) { echo '
-            <div class="alert alert-danger" role="alert">
-            '.$Erreur.'
-        </div></p>'; }
-
-        if (isset($Valid)) { echo '
-            <div class="alert alert-success" role="alert">
-            '.$Valid.'
-            </div></p>'; }
-        ?>
+<?php if (isset($Erreur)) { echo "<font color='#FF0000'>".$Erreur."</font><BR />"; }
+if (isset($Valid)) { echo "<font color='#009900'>".$Valid."</font><BR />"; } ?>
 
 Etes-vous sur de vouloir supprimer ce compte ? </p>
 

@@ -1,61 +1,58 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
 
 if ($Cnx_Admin!=TRUE) {
-  header('location:'.HOME.'/Admin');
+  header('location:'.$Home.'/Admin');
 }
 
-if (isset($_GET['erreur']) || isset($_GET['valid'])) {
-      $Erreur=$_GET['erreur'];
-      $Valid=$_GET['valid'];
-}
+$Erreur=$_GET['erreur'];
+$Valid=$_GET['valid'];
 
 //Moteur de recherche
 if (isset($_POST['MoteurRecherche'])) {
     if ($_POST['RechercheCategorie']!="") {
         $RechercheCategorie=trim($_POST['RechercheCategorie']);
-        $SelectListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste WHERE categorie=:categorie");
+        $SelectListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste WHERE categorie=:categorie");
         $SelectListe->execute(array(':categorie'=> $RechercheCategorie)); 
     }
     elseif (!empty($_POST['RechercheAlumni'])) {
         $RechercheAlumni=trim($_POST['RechercheAlumni']);
-        $SelectListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste WHERE alumni LIKE :alumni");
+        $SelectListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste WHERE alumni LIKE :alumni");
         $SelectListe->execute(array(':alumni' => "%".$RechercheAlumni."%")); 
     }
     elseif ($_POST['RechercheStatut']!="") {
         $RechercheStatut=trim($_POST['RechercheStatut']);
-        $SelectListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste WHERE statut=:statut");
+        $SelectListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste WHERE statut=:statut");
         $SelectListe->execute(array(':statut' =>$RechercheStatut)); 
     }
     elseif (!empty($_POST['RechercheNom'])) {
         $RechercheNom=trim($_POST['RechercheNom']);
-        $SelectListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste WHERE nom LIKE :nom");
+        $SelectListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste WHERE nom LIKE :nom");
         $SelectListe->execute(array(':nom' => "%".$RechercheNom."%")); 
     }
     elseif (!empty($_POST['RecherchePrenom'])) {
         $RecherchePrenom=trim($_POST['RecherchePrenom']);
-        $SelectListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste WHERE prenom LIKE :prenom");
+        $SelectListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste WHERE prenom LIKE :prenom");
         $SelectListe->execute(array(':prenom' => "%".$RecherchePrenom."%")); 
     }
     elseif (!empty($_POST['RechercheEmail'])) {
         $RechercheEmail=trim($_POST['RechercheEmail']);
-        $SelectListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste WHERE email=:email");
+        $SelectListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste WHERE email=:email");
         $SelectListe->execute(array(':email' => $RechercheEmail)); 
     }
     else {
-        $SelectListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste ORDER BY nom ASC");
+        $SelectListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste ORDER BY nom ASC");
         $SelectListe->execute();
     }
 }
 else {
-    $SelectListe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste ORDER BY nom ASC");
+    $SelectListe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste ORDER BY nom ASC");
     $SelectListe->execute();
 }
 
-$SelectGroupe=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Groupe");
+$SelectGroupe=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Groupe");
 $SelectGroupe->execute();
 
 if (isset($_POST['Ajouter'])) {
@@ -78,13 +75,13 @@ $ext_origin=strchr($_FILES['fichier']['name'], '.');
                 $Prenom = $data[4];
                 $Email = $data[5];
 
-                $Select=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste WHERE email=:email");
+                $Select=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste WHERE email=:email");
                 $Select->bindParam(':email', $Email, PDO::PARAM_STR);
                 $Select->execute();
                 $Count=$Select->rowCount();
 
                 if($Count==0) {
-                    $Ajout=$cnx->prepare("INSERT INTO ".DB_PREFIX."mailing_Liste (categorie, alumni, statut, nom, prenom, email) VALUES(:categorie, :alumni, :statut, :nom, :prenom, :email)");
+                    $Ajout=$cnx->prepare("INSERT INTO ".$Prefix."_mailing_Liste (categorie, alumni, statut, nom, prenom, email) VALUES(:categorie, :alumni, :statut, :nom, :prenom, :email)");
                     $Ajout->bindParam(':categorie', $Categorie, PDO::PARAM_STR);
                     $Ajout->bindParam(':alumni', $Alumni, PDO::PARAM_STR);
                     $Ajout->bindParam(':statut', $Statut, PDO::PARAM_STR);
@@ -98,7 +95,7 @@ $ext_origin=strchr($_FILES['fichier']['name'], '.');
         }
 
         $Valid="E-mail ajoutée avec succès";
-        header('Location:'.HOME.'/Admin/Mailing/Liste/?valid='.urlencode($Valid));
+        header('Location:'.$Home.'/Admin/Mailing/Liste/?valid='.urlencode($Valid));
     }
 }
 
@@ -110,7 +107,7 @@ if (isset($_POST['inserer'])) {
     $Prenom = $_POST['prenom'];
     $Email = $_POST['email'];
 
-    $Select=$cnx->prepare("SELECT * FROM ".DB_PREFIX."mailing_Liste WHERE email=:email");
+    $Select=$cnx->prepare("SELECT * FROM ".$Prefix."_mailing_Liste WHERE email=:email");
     $Select->bindParam(':email', $Email, PDO::PARAM_STR);
     $Select->execute();
     $Count=$Select->rowCount();
@@ -119,7 +116,7 @@ if (isset($_POST['inserer'])) {
        $Erreur="Ce contact existe déjà !";
     }
     else {
-        $Ajout=$cnx->prepare("INSERT INTO ".DB_PREFIX."mailing_Liste (categorie, alumni, statut, nom, prenom, email) VALUES(:categorie, :alumni, :statut, :nom, :prenom, :email)");
+        $Ajout=$cnx->prepare("INSERT INTO ".$Prefix."_mailing_Liste (categorie, alumni, statut, nom, prenom, email) VALUES(:categorie, :alumni, :statut, :nom, :prenom, :email)");
         $Ajout->bindParam(':categorie', $Categorie, PDO::PARAM_STR);
         $Ajout->bindParam(':alumni', $Alumni, PDO::PARAM_STR);
         $Ajout->bindParam(':statut', $Statut, PDO::PARAM_STR);
@@ -129,7 +126,7 @@ if (isset($_POST['inserer'])) {
         $Ajout->execute();   
 
         $Valid="E-mail ajoutée avec succès";
-        header('Location:'.HOME.'/Admin/Mailing/Liste/?valid='.urlencode($Valid));  
+        header('Location:'.$Home.'/Admin/Mailing/Liste/?valid='.urlencode($Valid));  
     }
 }
 
@@ -138,13 +135,13 @@ if (isset($_POST['Supprimer'])) {
     $Compteur=count($Selection);
 
     for($u=0;$u<$Compteur;$u++) {
-        $delete=$cnx->prepare("DELETE FROM ".DB_PREFIX."mailing_Liste WHERE id=:id");
+        $delete=$cnx->prepare("DELETE FROM ".$Prefix."_mailing_Liste WHERE id=:id");
         $delete->bindParam(':id', $Selection[$u], PDO::PARAM_STR);
         $delete->execute();
     }
 
     $Valid="E-mail supprimer avec succès";
-    header('Location:'.HOME.'/Admin/Mailing/Liste/?valid='.urlencode($Valid));
+    header('Location:'.$Home.'/Admin/Mailing/Liste/?valid='.urlencode($Valid));
 }
 
 if (isset($_POST['ExporterListe'])) {
@@ -152,13 +149,13 @@ if (isset($_POST['ExporterListe'])) {
     $Compteur=count($Selection);
 
     for($u=0;$u<$Compteur;$u++) {
-        $delete=$cnx->prepare("DELETE FROM ".DB_PREFIX."mailing_Liste WHERE id=:id");
+        $delete=$cnx->prepare("DELETE FROM ".$Prefix."_mailing_Liste WHERE id=:id");
         $delete->bindParam(':id', $Selection[$u], PDO::PARAM_STR);
         $delete->execute();
     }
 
     $Valid="E-mail supprimer avec succès";
-    header('Location:'.HOME.'/Admin/Mailing/Liste/?valid='.urlencode($Valid));
+    header('Location:'.$Home.'/Admin/Mailing/Liste/?valid='.urlencode($Valid));
 }
 
 ?>
@@ -319,7 +316,7 @@ while($Liste=$SelectListe->fetch(PDO::FETCH_OBJ)) { ?>
             <input type="checkbox" name="selection[]" value="<?php echo $Liste->id; ?>"/>
         </td>
         <td>
-            <a href="<?php echo HOME ?>/Admin/Mailing/Liste/Modifier/?id=<?php echo $Liste->id; ?>"><img src="<?php echo HOME ?>/Admin/lib/img/modifier.png"></a>
+            <a href="<?php echo $Home; ?>/Admin/Mailing/Liste/Modifier/?id=<?php echo $Liste->id; ?>"><img src="<?php echo $Home; ?>/Admin/lib/img/modifier.png"></a>
         </td>
     </tr>
 <?php

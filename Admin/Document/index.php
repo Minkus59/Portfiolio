@@ -1,17 +1,14 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
 
 if ($Cnx_Admin===false) {
-  header('location:'.HOME.'/Admin');
+  header('location:'.$Home.'/Admin');
 }
 
-if (isset($_GET['erreur']) || isset($_GET['valid'])) {
-      $Erreur=$_GET['erreur'];
-      $Valid=$_GET['valid'];
-}
+$Erreur=$_GET['erreur'];
+$Valid=$_GET['valid'];
 $Now=time();
 $ext = array('.jpeg', '.JPEG', '.jpg', '.JPG', '.png', '.PNG');
 $ext1 = array('.jpeg', '.JPEG', '.jpg', '.JPG');
@@ -20,7 +17,7 @@ $ext3 = array('.pdf', '.PDF');
 $ext4 = array('.avi', '.AVI', '.mov', '.MOV', '.mp4', '.mp4', '.mpg', '.MPG', '.mpa', '.MPA', '.mp2', '.MP2', '.m2p', '.M2P', '.wma', '.WMA', '.asf', '.ASF');
 $ext5 = array('.pps', '.PPS', '.ppsx', '.PPSX');
 
-$SelectDocument=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Document ORDER BY libele ASC");
+$SelectDocument=$cnx->prepare("SELECT * FROM ".$Prefix."_Document ORDER BY libele ASC");
 $SelectDocument->execute();
 
 //--------- Etape
@@ -55,7 +52,7 @@ if (isset($_POST['Ajouter'])) {
             $TailleImage=@getimagesize($_FILES['document']['tmp_name']);
             $taille_max="2000000000";
             $repInt=$_SERVER['DOCUMENT_ROOT']."/lib/Photo/";
-            $repExt=HOME."/lib/Photo/";
+            $repExt=$Home."/lib/Photo/";
             
             if (!file_exists($repInt)) {
                 mkdir($repInt, 0777);
@@ -97,7 +94,7 @@ if (isset($_POST['Ajouter'])) {
                     $_SESSION['lienInt']=$repInt.$Hash.$ext_origin;
                     $_SESSION['libele']=$Libele;
                     $delai=0;
-                    header("Refresh:".$delai.";url=".HOME."/Admin/Document/");
+                    header("Refresh:".$delai.";url=".$Home."/Admin/Document/");
                 }
             } 
         }
@@ -105,7 +102,7 @@ if (isset($_POST['Ajouter'])) {
             $TailleImage=@getimagesize($_FILES['document']['tmp_name']);
             $taille_max="2000000000";
             $repInt=$_SERVER['DOCUMENT_ROOT']."/lib/Photo/";
-            $repExt=HOME."/lib/Photo/";
+            $repExt=$Home."/lib/Photo/";
 
             if (!file_exists($repInt)) {
                 mkdir($repInt, 0777);
@@ -145,14 +142,14 @@ if (isset($_POST['Ajouter'])) {
                     $_SESSION['lienInt']=$repInt.$Hash.$ext_origin;
                     $_SESSION['libele']=$Libele;
                     $delai=0;
-                    header("Refresh:".$delai.";url=".HOME."/Admin/Document/");
+                    header("Refresh:".$delai.";url=".$Home."/Admin/Document/");
                 }
             } 
         }
         if (in_array($ext_origin, $ext3)) {
             $taille_max="2000000000";
             $repInt=$_SERVER['DOCUMENT_ROOT']."/lib/Document/";
-            $repExt=HOME."/lib/Document/";
+            $repExt=$Home."/lib/Document/";
             $Type="PDF";
             $Lien=$repExt.$Hash.$ext_origin;
 
@@ -167,7 +164,7 @@ if (isset($_POST['Ajouter'])) {
                     ErreurLog($Erreur);
                 }
                 else {
-                    $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."Document (libele, lien, type) VALUES(:libele, :lien, :type)");
+                    $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_Document (libele, lien, type) VALUES(:libele, :lien, :type)");
                     $Insert->BindParam(":type", $Type, PDO::PARAM_STR);
                     $Insert->BindParam(":lien", $Lien, PDO::PARAM_STR);
                     $Insert->BindParam(":libele", $Libele, PDO::PARAM_STR);
@@ -179,7 +176,7 @@ if (isset($_POST['Ajouter'])) {
                     }
                     else  {     
                         $Valid="Document ajouter avec succès";
-                        header("location:".HOME."/Admin/Document/?valid=".urlencode($Valid));
+                        header("location:".$Home."/Admin/Document/?valid=".urlencode($Valid));
                     }
                 }
             }
@@ -187,7 +184,7 @@ if (isset($_POST['Ajouter'])) {
         if (in_array($ext_origin, $ext4)) {
             $taille_max="2000000000";
             $repInt=$_SERVER['DOCUMENT_ROOT']."/lib/Video/";
-            $repExt=HOME."/lib/Video/";
+            $repExt=$Home."/lib/Video/";
             $Type="Video";
             $Lien=$repExt.$Hash.$ext_origin;
 
@@ -206,7 +203,7 @@ if (isset($_POST['Ajouter'])) {
                     ErreurLog($Erreur);
                 }
                 else {
-                    $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."Document (libele, lien, type) VALUES(:libele, :lien, :type)");
+                    $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_Document (libele, lien, type) VALUES(:libele, :lien, :type)");
                     $Insert->BindParam(":type", $Type, PDO::PARAM_STR);
                     $Insert->BindParam(":lien", $Lien, PDO::PARAM_STR);
                     $Insert->BindParam(":libele", $Libele, PDO::PARAM_STR);
@@ -218,7 +215,7 @@ if (isset($_POST['Ajouter'])) {
                     }
                     else  {     
                         $Valid="Document ajouter avec succès";
-                        header("location:".HOME."/Admin/Document/?valid=".urlencode($Valid));
+                        header("location:".$Home."/Admin/Document/?valid=".urlencode($Valid));
                     }
                 }
             }
@@ -226,7 +223,7 @@ if (isset($_POST['Ajouter'])) {
         if (in_array($ext_origin, $ext5)) {
             $taille_max="2000000000";
             $repInt=$_SERVER['DOCUMENT_ROOT']."/lib/pps/";
-            $repExt=HOME."/lib/pps/";
+            $repExt=$Home."/lib/pps/";
             $Type="PPS";
             $Lien=$repExt.$Hash.$ext_origin;
 
@@ -245,7 +242,7 @@ if (isset($_POST['Ajouter'])) {
                     ErreurLog($Erreur);
                 }
                 else {
-                    $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."Document (libele, lien, type) VALUES(:libele, :lien, :type)");
+                    $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_Document (libele, lien, type) VALUES(:libele, :lien, :type)");
                     $Insert->BindParam(":type", $Type, PDO::PARAM_STR);
                     $Insert->BindParam(":lien", $Lien, PDO::PARAM_STR);
                     $Insert->BindParam(":libele", $Libele, PDO::PARAM_STR);
@@ -257,7 +254,7 @@ if (isset($_POST['Ajouter'])) {
                     }
                     else  {     
                         $Valid="Document ajouter avec succès";
-                        header("location:".HOME."/Admin/Document/?valid=".urlencode($Valid));
+                        header("location:".$Home."/Admin/Document/?valid=".urlencode($Valid));
                     }
                 }
             }
@@ -269,7 +266,7 @@ if (isset($_POST['Ajouter'])) {
 //--------- Validation, Insertion
 if (isset($_POST['Valider'])) {
         $Type="Image";
-        $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."Document (libele, lien, type) VALUES(:libele, :lien, :type)");
+        $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_Document (libele, lien, type) VALUES(:libele, :lien, :type)");
         $Insert->BindParam(":lien", $_SESSION['lien'], PDO::PARAM_STR);
         $Insert->BindParam(":libele", $_SESSION['libele'], PDO::PARAM_STR);
         $Insert->BindParam(":type", $Type, PDO::PARAM_STR);
@@ -286,7 +283,7 @@ if (isset($_POST['Valider'])) {
             unset($_SESSION['libele']);
 
             $Valid="Document ajouter avec succès";
-            header("location:".HOME."/Admin/Document/?valid=".urlencode($Valid));
+            header("location:".$Home."/Admin/Document/?valid=".urlencode($Valid));
         }  
 }
 
@@ -297,7 +294,7 @@ if (isset($_POST['Annuler'])) {
     unset($_SESSION['lien']);
     unset($_SESSION['lienInt']);
   
-    header('location:'.HOME.'/Admin/Document');
+    header('location:'.$Home.'/Admin/Document');
 }
 
 if (isset($_POST['Rotation'])) {
@@ -332,7 +329,7 @@ if (isset($_POST['Rotation'])) {
     imagedestroy($rotate);
   
     $delai=0;
-    header("Refresh:".$delai.";url=".HOME."/Admin/Document/");
+    header("Refresh:".$delai.";url=".$Home."/Admin/Document/");
 }
 
 ?>
@@ -344,17 +341,8 @@ if (isset($_POST['Rotation'])) {
 <?php require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/menu.inc.php"); ?>
 
 <article>
-<?php
-if (isset($Erreur)) { echo '
-<div class="alert alert-danger" role="alert">
-'.$Erreur.'
-</div></p>'; }
-
-if (isset($Valid)) { echo '
-<div class="alert alert-success" role="alert">
-'.$Valid.'
-</div></p>'; }
-?>
+<?php if (isset($Erreur)) { echo "<p><font color='#FF0000'>".urldecode($Erreur)."</font><BR />"; }
+if (isset($Valid)) { echo "<p><font color='#009900'>".urldecode($Valid)."</font><BR />"; }   ?>
 
 
 <?php if ($Etape1==false) { ?>
@@ -428,12 +416,12 @@ while ($Document=$SelectDocument->fetch(PDO::FETCH_OBJ)) {
       echo "<TD>".$Document->lien."</TD>";
       echo "<TD>";
       if ($Document->type=="PDF") {
-        echo "<a href='$Document->lien'><img src='echo HOME/Admin/lib/img/apercu.png'></a>";
+        echo "<a href='$Document->lien'><img src='$Home/Admin/lib/img/apercu.png'></a>";
       }
       if ($Document->type=="PPS") {
-        echo "<a href='$Document->lien'><img src='echo HOME/Admin/lib/img/apercu.png'></a>";
+        echo "<a href='$Document->lien'><img src='$Home/Admin/lib/img/apercu.png'></a>";
       }
-      echo "<a href='echo HOME/Admin/Document/supprimer.php?id=$Document->id'><img src='echo HOME/Admin/lib/img/supprimer.png'></a>";
+      echo "<a href='$Home/Admin/Document/supprimer.php?id=$Document->id'><img src='$Home/Admin/lib/img/supprimer.png'></a>";
       echo "</TD></TR>";
 }
 ?>

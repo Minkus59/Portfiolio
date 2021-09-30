@@ -1,14 +1,23 @@
 <?php 
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/impinfbdd/config.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/controller/page.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
 
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/controller/head.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/controller/header.inc.php"); 
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/controller/nav.inc.php"); 
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/head.inc.php");
 
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/controller/article.inc.php"); 
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/header.inc.php"); 
 
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/views/contact/contact.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/frontend/controller/footer.inc.php"); 
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/nav.inc.php"); 
+
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/article/presentation.inc.php"); 
+
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/article/competence.inc.php");
+
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/article/cv.inc.php");
+
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/article/portfolio.inc.php");
+
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/article/contact.inc.php");
+
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/footer.inc.php"); 
 ?>

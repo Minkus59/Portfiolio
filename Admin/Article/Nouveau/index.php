@@ -1,28 +1,25 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
 
 if ($Cnx_Admin===false) {
-  header('location:'.HOME.'/Admin');
+  header('location:'.$Home.'/Admin');
 }
 
-if (isset($_GET['erreur']) || isset($_GET['valid'])) {
-      $Erreur=$_GET['erreur'];
-      $Valid=$_GET['valid'];
-}
+$Erreur=$_GET['erreur'];
+$Valid=$_GET['valid'];
 $Id=$_GET['id'];
 $Now=time();
 
-$SelectDocument=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Document ORDER BY libele ASC");
+$SelectDocument=$cnx->prepare("SELECT * FROM ".$Prefix."_Document ORDER BY libele ASC");
 $SelectDocument->execute();
 
-$SelectPage=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Page");
+$SelectPage=$cnx->prepare("SELECT * FROM ".$Prefix."_Page");
 $SelectPage->execute();
 
 if (isset($_GET['id'])) { 
-    $Select=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Article WHERE id=:id");
+    $Select=$cnx->prepare("SELECT * FROM ".$Prefix."_Article WHERE id=:id");
     $Select->BindParam(":id", $Id, PDO::PARAM_STR);
     $Select->execute();
     $Actu=$Select->fetch(PDO::FETCH_OBJ);
@@ -38,7 +35,7 @@ if ((isset($_POST['Modifier']))&&(isset($_GET['id']))) {
         ErreurLog($Erreur);
     }
     else {
-        $Insert=$cnx->prepare("UPDATE ".DB_PREFIX."Article SET position=:position ,message=:message, page=:page, created=:created WHERE id=:id");
+        $Insert=$cnx->prepare("UPDATE ".$Prefix."_Article SET position=:position ,message=:message, page=:page, created=:created WHERE id=:id");
         $Insert->BindParam(":id", $Id, PDO::PARAM_STR);
         $Insert->BindParam(":position", $Position, PDO::PARAM_STR);
         $Insert->BindParam(":message", $Message, PDO::PARAM_STR);
@@ -52,7 +49,7 @@ if ((isset($_POST['Modifier']))&&(isset($_GET['id']))) {
         }
         else  {     
             $Valid="Article modifier avec succès";
-            header('location:'.HOME.'/Admin/Article/Nouveau/?id='.$Id.'&valid='.urlencode($Valid));
+            header('location:'.$Home.'/Admin/Article/Nouveau/?id='.$Id.'&valid='.urlencode($Valid));
         }
     }
 } 
@@ -67,14 +64,14 @@ if ((isset($_POST['Ajouter']))&&(!isset($_GET['id']))) {
     }
     else {
          //verifier si 1er article sinon position +1
-         $Verif=$cnx->prepare("SELECT * FROM ".DB_PREFIX."Article WHERE page=:page");
+         $Verif=$cnx->prepare("SELECT * FROM ".$Prefix."_Article WHERE page=:page");
          $Verif->BindParam(":page", $Page, PDO::PARAM_STR);
          $Verif->execute();
          $NbPage=$Verif->rowCount();
 
          if ($NbPage!=0) {
               $Position=$NbPage+1;
-              $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."Article (position, message, page, created) VALUES(:position, :message, :page, :created)");
+              $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_Article (position, message, page, created) VALUES(:position, :message, :page, :created)");
               $Insert->BindParam(":position", $Position, PDO::PARAM_STR);
               $Insert->BindParam(":message", $Message, PDO::PARAM_STR);
               $Insert->BindParam(":page", $Page, PDO::PARAM_STR);        
@@ -82,7 +79,7 @@ if ((isset($_POST['Ajouter']))&&(!isset($_GET['id']))) {
               $Insert->execute();
          }
          else {
-              $Insert=$cnx->prepare("INSERT INTO ".DB_PREFIX."Article (message, page, created) VALUES(:message, :page, :created)");
+              $Insert=$cnx->prepare("INSERT INTO ".$Prefix."_Article (message, page, created) VALUES(:message, :page, :created)");
               $Insert->BindParam(":message", $Message, PDO::PARAM_STR);
               $Insert->BindParam(":page", $Page, PDO::PARAM_STR);        
               $Insert->BindParam(":created", $Now, PDO::PARAM_STR);
@@ -94,28 +91,22 @@ if ((isset($_POST['Ajouter']))&&(!isset($_GET['id']))) {
          }
          else  {
             $Valid="Article ajouter avec succès";
-            header('location:'.HOME.'/Admin/Article/Nouveau/?valid='.urlencode($Valid));
+            header('location:'.$Home.'/Admin/Article/Nouveau/?valid='.urlencode($Valid));
          }
     }
 }
     
 ?>
+
 <?php require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/head.inc.php"); ?>
+
 <?php require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/header.inc.php"); ?>
+
 <?php require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/menu.inc.php"); ?>
 
 <article>
-<?php
-if (isset($Erreur)) { echo '
-<div class="alert alert-danger" role="alert">
-'.$Erreur.'
-</div></p>'; }
-
-if (isset($Valid)) { echo '
-<div class="alert alert-success" role="alert">
-'.$Valid.'
-</div></p>'; }
-?>
+<?php if (isset($Erreur)) { echo "<p><font color='#FF0000'>".urldecode($Erreur)."</font><BR />"; }
+if (isset($Valid)) { echo "<p><font color='#009900'>".urldecode($Valid)."</font><BR />"; }   ?>
 
 <?php if (isset($_GET['id'])) { ?>
       <H1>Modifier un article</H1> <?php
@@ -128,7 +119,7 @@ if (isset($Valid)) { echo '
 <option value="">--  --</option>
 
 <?php while ($Page=$SelectPage->fetch(PDO::FETCH_OBJ)) { ?>
-<option value='<?php echo $Page->lien; ?>' <?php if(isset($_GET['id'])) { if ($Actu->page == $Page->lien) { echo "selected"; }} ?>><?php echo $Page->lien; ?></option><?php } ?>
+<option value='<?php echo $Page->lien; ?>' <?php if ($Actu->page== $Page->lien) { echo "selected"; } ?>><?php echo $Page->lien; ?></option><?php } ?>
 </select><BR /><BR />
 
 <textarea id="message" name="message" placeholder="Message*" require="required"><?php if (isset($_GET['id'])) { echo $Actu->message; } ?></textarea><BR /><BR />
@@ -145,35 +136,15 @@ if (isset($Valid)) { echo '
 
 <H1>Aide</H1>
 
-<a href="<?php echo HOME ?>/Admin/lib/doc/userguide.pdf">Guide utilisateur</a> de l'editeur de texte <BR />
+<a href="<?php echo $Home; ?>/Admin/lib/doc/userguide.pdf">Guide utilisateur</a> de l'editeur de texte <BR />
 
 <H1>Infos utiles</H1>
 
 Dans la barre "Outils" cliquer sur "Code source"
-Encadrer votre texte dans les balises suivante :<BR />
-<xmp>   
-<section id="Contact" class="ContentBlanc">
-    <div class="row justify-content-center">
-        text ici
-
-        <div class="Retour">
-            <input type="button" onclick="window.location.href='#Haut'">
-        </div>
-    </div>
-</section>
-</xmp>
-<BR />
-<xmp> 
-<section id="Contact" class="ContentBlanc">
-    <div class="row justify-content-center">
-        text ici
-
-        <div class="Retour">
-            <input type="button" onclick="window.location.href='#Haut'">
-        </div>
-    </div>
-</section>
-</xmp>
+Encadrer votre texte dans les balises suivante pour un alignement sur 2-3-4 cadres <BR />
+<xmp><div id="Cadres2">Votre texte</div><div id="Cadres2">Votre texte</div>
+<div id="Cadres3">Votre texte</div><div id="Cadres3">Votre texte</div><div id="Cadres3">Votre texte</div>
+<div id="Cadres4">Votre texte</div><div id="Cadres4">Votre texte</div><div id="Cadres4">Votre texte</div><div id="Cadres4">Votre texte</div></xmp>
 <BR /><HR /><BR />
 
 
@@ -206,7 +177,7 @@ while ($Document=$SelectDocument->fetch(PDO::FETCH_OBJ)) {
       echo "<TD>".$Document->lien."</TD>";
       echo "<TD>";
       if ($Document->type=="PDF") {
-        echo "<a href='$Document->lien'><img src='echo HOME/Admin/lib/img/apercu.png'></a>";
+        echo "<a href='$Document->lien'><img src='$Home/Admin/lib/img/apercu.png'></a>";
       }
       echo "</TD></TR>";
 }

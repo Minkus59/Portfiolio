@@ -1,11 +1,10 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/impinfbdd/config.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/fonction_perso.inc.php");  
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/redirect.inc.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/requete.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/fonction_perso.inc.php");  
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/redirect.inc.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/lib/script/requete.inc.php");
 
 if ($Cnx_Admin===false) {
-  header('location:'.HOME.'/Admin');
+  header('location:'.$Home.'/Admin');
 }
 
 $Erreur=$_GET['erreur'];
@@ -13,15 +12,15 @@ $Id=$_GET['id'];
 
 if ((!empty($_GET['id']))&&(isset($_POST['oui']))) {
 
-    $Update=$cnx->prepare("UPDATE ".DB_PREFIX."compte_Admin SET admin=1 WHERE id=:id");
+    $Update=$cnx->prepare("UPDATE ".$Prefix."_compte_Admin SET admin=1 WHERE id=:id");
     $Update->bindParam(':id', $Id, PDO::PARAM_INT);
     $Update->execute();
 
-    header('Location:'.HOME.'/Admin/CompteAdmin/');
+    header('Location:'.$Home.'/Admin/CompteAdmin/');
 }
 
 if ((!empty($_GET['id']))&&(isset($_POST['non']))) {  
-    header('Location:'.HOME.'/Admin/CompteAdmin/');
+    header('Location:'.$Home.'/Admin/CompteAdmin/');
 }
 ?>  
 
@@ -32,17 +31,8 @@ if ((!empty($_GET['id']))&&(isset($_POST['non']))) {
 <?php require_once($_SERVER['DOCUMENT_ROOT']."/Admin/lib/script/menu.inc.php"); ?>
 
 <article>
-        <?php
-        if (isset($Erreur)) { echo '
-            <div class="alert alert-danger" role="alert">
-            '.$Erreur.'
-        </div></p>'; }
-
-        if (isset($Valid)) { echo '
-            <div class="alert alert-success" role="alert">
-            '.$Valid.'
-            </div></p>'; }
-        ?>
+<?php if (isset($Erreur)) { echo "<font color='#FF0000'>".$Erreur."</font><BR />"; }
+if (isset($Valid)) { echo "<font color='#009900'>".$Valid."</font><BR />"; } ?>
 
 Etes-vous sur de vouloir nommer ce compte Administrateur ? </p>
 
