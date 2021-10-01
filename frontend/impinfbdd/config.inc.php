@@ -7,9 +7,9 @@ error_reporting(-1);
 
 header('Content-Type: text/html; charset=utf-8');
 
-define("DB_HOST", "mysql:host=michaeeminkus.mysql.db;dbname=michaeeminkus");
+define("DB_HOST", "mysql:host=XXXXXX;dbname=michaeeminkus");
 define("DB_USER", "michaeeminkus");
-define("DB_PWD", "Cqdfx301");
+define("DB_PWD", "XXXXXX");
 
 define("DB_PREFIX", "Portfolio__");
 
