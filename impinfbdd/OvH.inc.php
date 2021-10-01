@@ -1,9 +1,9 @@
 <?php 
 header('Content-Type: text/html; charset=utf-8');
 
-$Ovh_serv_bDd = 'mysql:host=michaeeminkus.mysql.db;dbname=michaeeminkus';
+$Ovh_serv_bDd = 'mysql:host=XXXXXX;dbname=michaeeminkus';
 $uTil_bDd_serv = 'michaeeminkus';
-$mDp_bDd_serv = 'Cqdfx301';
+$mDp_bDd_serv = 'XXXXXX';
 
 $Serveur="michael-helinckx@hotmail.fr";
 $Destinataire="michael-helinckx@hotmail.fr";
